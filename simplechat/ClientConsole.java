@@ -5,6 +5,8 @@
 import java.io.*;
 import client.*;
 import common.*;
+import spy.*;
+
 
 /**
  * This class constructs the UI for a chat client.  It implements the
@@ -69,6 +71,15 @@ public class ClientConsole implements ChatIF
       BufferedReader fromConsole = 
         new BufferedReader(new InputStreamReader(System.in));
       String message;
+
+      String codeName;
+      String dynamicPassword;
+
+      System.out.println("Enter credentials.");
+      System.out.println("Code Name.");
+      codeName = fromConsole.readLine();
+      System.out.println("Code Name.");
+      dynamicPassword = fromConsole.readLine();
 
       while (true) 
       {

@@ -64,11 +64,11 @@ public class ChatClient extends AbstractClient
    *
    * @param message The message from the UI.    
    */
-  public void handleMessageFromClientUI(String message)
+  public void handleMessageFromClientUI(Object msg)
   {
     try
     {
-      sendToServer(message);
+      sendToServer(msg);
     }
     catch(IOException e)
     {
