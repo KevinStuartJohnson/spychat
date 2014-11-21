@@ -1,8 +1,11 @@
-package spy;
+/*PLEASE DO NOT EDIT THIS CODE*/
+/*This code was generated using the UMPLE 1.21.0.4777 modeling language!*/
+
 
 import java.util.*;
 
-
+// line 2 "model.ump"
+// line 25 "model.ump"
 public class Operative
 {
 
@@ -11,9 +14,9 @@ public class Operative
   //------------------------
 
   //Operative Attributes
-  private String name;
-  private String privatepassword;
-  private String dynamicpassword;
+  private String codeName;
+  private String privatePassword;
+  private String dynamicPassword;
 
   //Operative Associations
   private Mission mission;
@@ -24,11 +27,11 @@ public class Operative
   // CONSTRUCTOR
   //------------------------
 
-  public Operative(String aName, String aPrivatepassword, String aDynamicpassword)
+  public Operative(String aCodeName, String aPrivatePassword, String aDynamicPassword)
   {
-    name = aName;
-    privatepassword = aPrivatepassword;
-    dynamicpassword = aDynamicpassword;
+    codeName = aCodeName;
+    privatePassword = aPrivatePassword;
+    dynamicPassword = aDynamicPassword;
     supervisor = new ArrayList<Operative>();
     operatives = new ArrayList<Operative>();
   }
@@ -37,43 +40,43 @@ public class Operative
   // INTERFACE
   //------------------------
 
-  public boolean setName(String aName)
+  public boolean setCodeName(String aCodeName)
   {
     boolean wasSet = false;
-    name = aName;
+    codeName = aCodeName;
     wasSet = true;
     return wasSet;
   }
 
-  public boolean setPrivatepassword(String aPrivatepassword)
+  public boolean setPrivatePassword(String aPrivatePassword)
   {
     boolean wasSet = false;
-    privatepassword = aPrivatepassword;
+    privatePassword = aPrivatePassword;
     wasSet = true;
     return wasSet;
   }
 
-  public boolean setDynamicpassword(String aDynamicpassword)
+  public boolean setDynamicPassword(String aDynamicPassword)
   {
     boolean wasSet = false;
-    dynamicpassword = aDynamicpassword;
+    dynamicPassword = aDynamicPassword;
     wasSet = true;
     return wasSet;
   }
 
-  public String getName()
+  public String getCodeName()
   {
-    return name;
+    return codeName;
   }
 
-  public String getPrivatepassword()
+  public String getPrivatePassword()
   {
-    return privatepassword;
+    return privatePassword;
   }
 
-  public String getDynamicpassword()
+  public String getDynamicPassword()
   {
-    return dynamicpassword;
+    return dynamicPassword;
   }
 
   public Mission getMission()
@@ -353,11 +356,11 @@ public class Operative
 
   public String toString()
   {
-    String outputString = "";
+	  String outputString = "";
     return super.toString() + "["+
-            "name" + ":" + getName()+ "," +
-            "privatepassword" + ":" + getPrivatepassword()+ "," +
-            "dynamicpassword" + ":" + getDynamicpassword()+ "]" + System.getProperties().getProperty("line.separator") +
+            "codeName" + ":" + getCodeName()+ "," +
+            "privatePassword" + ":" + getPrivatePassword()+ "," +
+            "dynamicPassword" + ":" + getDynamicPassword()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "mission = "+(getMission()!=null?Integer.toHexString(System.identityHashCode(getMission())):"null")
      + outputString;
   }

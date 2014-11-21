@@ -1,8 +1,11 @@
-package spy;
+/*PLEASE DO NOT EDIT THIS CODE*/
+/*This code was generated using the UMPLE 1.21.0.4777 modeling language!*/
+
 
 import java.util.*;
 
-
+// line 10 "model.ump"
+// line 32 "model.ump"
 public class Mission
 {
 
@@ -11,8 +14,8 @@ public class Mission
   //------------------------
 
   //Mission Attributes
-  private int assignmentdate;
-  private int enddate;
+  private int assignmentDate;
+  private int endDate;
   private String description;
   private String missionPassword;
 
@@ -24,10 +27,10 @@ public class Mission
   // CONSTRUCTOR
   //------------------------
 
-  public Mission(int aAssignmentdate, int aEnddate, String aDescription, String aMissionPassword)
+  public Mission(int aAssignmentDate, int aEndDate, String aDescription, String aMissionPassword)
   {
-    assignmentdate = aAssignmentdate;
-    enddate = aEnddate;
+    assignmentDate = aAssignmentDate;
+    endDate = aEndDate;
     description = aDescription;
     missionPassword = aMissionPassword;
     resources = new ArrayList<Resource>();
@@ -38,18 +41,18 @@ public class Mission
   // INTERFACE
   //------------------------
 
-  public boolean setAssignmentdate(int aAssignmentdate)
+  public boolean setAssignmentDate(int aAssignmentDate)
   {
     boolean wasSet = false;
-    assignmentdate = aAssignmentdate;
+    assignmentDate = aAssignmentDate;
     wasSet = true;
     return wasSet;
   }
 
-  public boolean setEnddate(int aEnddate)
+  public boolean setEndDate(int aEndDate)
   {
     boolean wasSet = false;
-    enddate = aEnddate;
+    endDate = aEndDate;
     wasSet = true;
     return wasSet;
   }
@@ -70,14 +73,14 @@ public class Mission
     return wasSet;
   }
 
-  public int getAssignmentdate()
+  public int getAssignmentDate()
   {
-    return assignmentdate;
+    return assignmentDate;
   }
 
-  public int getEnddate()
+  public int getEndDate()
   {
-    return enddate;
+    return endDate;
   }
 
   public String getDescription()
@@ -155,9 +158,9 @@ public class Mission
     return 0;
   }
 
-  public Resource addResource(String aName, String aLocation)
+  public Resource addResource(String aName, String aLocation, String aPrice)
   {
-    return new Resource(aName, aLocation, this);
+    return new Resource(aName, aLocation, aPrice, this);
   }
 
   public boolean addResource(Resource aResource)
@@ -309,10 +312,10 @@ public class Mission
 
   public String toString()
   {
-    String outputString = "";
+	  String outputString = "";
     return super.toString() + "["+
-            "assignmentdate" + ":" + getAssignmentdate()+ "," +
-            "enddate" + ":" + getEnddate()+ "," +
+            "assignmentDate" + ":" + getAssignmentDate()+ "," +
+            "endDate" + ":" + getEndDate()+ "," +
             "description" + ":" + getDescription()+ "," +
             "missionPassword" + ":" + getMissionPassword()+ "]"
      + outputString;

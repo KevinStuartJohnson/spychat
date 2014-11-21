@@ -1,0 +1,22 @@
+class Operative 
+{ 
+ codeName; 
+ privatePassword; 
+ dynamicPassword; 
+ * -- 0..1 Mission; 
+ * -- * Operative supervisor; 
+} 
+class Mission 
+{ 
+ int assignmentDate; 
+ int endDate; 
+ description; 
+ missionPassword; 
+ 1 -- * Resource; 
+} 
+class Resource 
+{ 
+ name; 
+ location; 
+ price;
+}
