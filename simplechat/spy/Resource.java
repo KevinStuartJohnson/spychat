@@ -1,9 +1,9 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.21.0.4777 modeling language!*/
+/*This code was generated using the UMPLE 1.21.0.4789 modeling language!*/
 
 
 
-// line 18 "model.ump"
+// line 21 "model.ump"
 // line 38 "model.ump"
 public class Resource
 {

@@ -1,11 +1,11 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.21.0.4777 modeling language!*/
+/*This code was generated using the UMPLE 1.21.0.4789 modeling language!*/
 
 
 import java.util.*;
 
 // line 10 "model.ump"
-// line 32 "model.ump"
+// line 33 "model.ump"
 public class Mission
 {
 
@@ -21,7 +21,7 @@ public class Mission
 
   //Mission Associations
   private List<Resource> resources;
-  private List<Operative> operatives;
+  private Operative operative;
 
   //------------------------
   // CONSTRUCTOR
@@ -34,7 +34,6 @@ public class Mission
     description = aDescription;
     missionPassword = aMissionPassword;
     resources = new ArrayList<Resource>();
-    operatives = new ArrayList<Operative>();
   }
 
   //------------------------
@@ -123,34 +122,15 @@ public class Mission
     return index;
   }
 
-  public Operative getOperative(int index)
+  public Operative getOperative()
   {
-    Operative aOperative = operatives.get(index);
-    return aOperative;
+    return operative;
   }
 
-  public List<Operative> getOperatives()
+  public boolean hasOperative()
   {
-    List<Operative> newOperatives = Collections.unmodifiableList(operatives);
-    return newOperatives;
-  }
-
-  public int numberOfOperatives()
-  {
-    int number = operatives.size();
-    return number;
-  }
-
-  public boolean hasOperatives()
-  {
-    boolean has = operatives.size() > 0;
+    boolean has = operative != null;
     return has;
-  }
-
-  public int indexOfOperative(Operative aOperative)
-  {
-    int index = operatives.indexOf(aOperative);
-    return index;
   }
 
   public static int minimumNumberOfResources()
@@ -225,75 +205,12 @@ public class Mission
     return wasAdded;
   }
 
-  public static int minimumNumberOfOperatives()
+  public boolean setOperative(Operative aNewOperative)
   {
-    return 0;
-  }
-
-  public boolean addOperative(Operative aOperative)
-  {
-    boolean wasAdded = false;
-    if (operatives.contains(aOperative)) { return false; }
-    Mission existingMission = aOperative.getMission();
-    if (existingMission == null)
-    {
-      aOperative.setMission(this);
-    }
-    else if (!this.equals(existingMission))
-    {
-      existingMission.removeOperative(aOperative);
-      addOperative(aOperative);
-    }
-    else
-    {
-      operatives.add(aOperative);
-    }
-    wasAdded = true;
-    return wasAdded;
-  }
-
-  public boolean removeOperative(Operative aOperative)
-  {
-    boolean wasRemoved = false;
-    if (operatives.contains(aOperative))
-    {
-      operatives.remove(aOperative);
-      aOperative.setMission(null);
-      wasRemoved = true;
-    }
-    return wasRemoved;
-  }
-
-  public boolean addOperativeAt(Operative aOperative, int index)
-  {  
-    boolean wasAdded = false;
-    if(addOperative(aOperative))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfOperatives()) { index = numberOfOperatives() - 1; }
-      operatives.remove(aOperative);
-      operatives.add(index, aOperative);
-      wasAdded = true;
-    }
-    return wasAdded;
-  }
-
-  public boolean addOrMoveOperativeAt(Operative aOperative, int index)
-  {
-    boolean wasAdded = false;
-    if(operatives.contains(aOperative))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfOperatives()) { index = numberOfOperatives() - 1; }
-      operatives.remove(aOperative);
-      operatives.add(index, aOperative);
-      wasAdded = true;
-    } 
-    else 
-    {
-      wasAdded = addOperativeAt(aOperative, index);
-    }
-    return wasAdded;
+    boolean wasSet = false;
+    operative = aNewOperative;
+    wasSet = true;
+    return wasSet;
   }
 
   public void delete()
@@ -303,10 +220,7 @@ public class Mission
       Resource aResource = resources.get(i - 1);
       aResource.delete();
     }
-    while( !operatives.isEmpty() )
-    {
-      operatives.get(0).setMission(null);
-    }
+    operative = null;
   }
 
 
@@ -317,7 +231,8 @@ public class Mission
             "assignmentDate" + ":" + getAssignmentDate()+ "," +
             "endDate" + ":" + getEndDate()+ "," +
             "description" + ":" + getDescription()+ "," +
-            "missionPassword" + ":" + getMissionPassword()+ "]"
+            "missionPassword" + ":" + getMissionPassword()+ "]" + System.getProperties().getProperty("line.separator") +
+            "  " + "operative = "+(getOperative()!=null?Integer.toHexString(System.identityHashCode(getOperative())):"null")
      + outputString;
   }
 }

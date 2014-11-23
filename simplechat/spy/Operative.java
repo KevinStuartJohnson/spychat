@@ -1,11 +1,11 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.21.0.4777 modeling language!*/
+/*This code was generated using the UMPLE 1.21.0.4789 modeling language!*/
 
 
 import java.util.*;
 
 // line 2 "model.ump"
-// line 25 "model.ump"
+// line 28 "model.ump"
 public class Operative
 {
 
@@ -19,9 +19,7 @@ public class Operative
   private String dynamicPassword;
 
   //Operative Associations
-  private Mission mission;
-  private List<Operative> supervisor;
-  private List<Operative> operatives;
+  private List<Operative> supervises;
 
   //------------------------
   // CONSTRUCTOR
@@ -32,8 +30,7 @@ public class Operative
     codeName = aCodeName;
     privatePassword = aPrivatePassword;
     dynamicPassword = aDynamicPassword;
-    supervisor = new ArrayList<Operative>();
-    operatives = new ArrayList<Operative>();
+    supervises = new ArrayList<Operative>();
   }
 
   //------------------------
@@ -79,278 +76,96 @@ public class Operative
     return dynamicPassword;
   }
 
-  public Mission getMission()
+  public Operative getSupervise(int index)
   {
-    return mission;
+    Operative aSupervise = supervises.get(index);
+    return aSupervise;
   }
 
-  public boolean hasMission()
+  public List<Operative> getSupervises()
   {
-    boolean has = mission != null;
-    return has;
+    List<Operative> newSupervises = Collections.unmodifiableList(supervises);
+    return newSupervises;
   }
 
-  public Operative getSupervisor(int index)
+  public int numberOfSupervises()
   {
-    Operative aSupervisor = supervisor.get(index);
-    return aSupervisor;
-  }
-
-  public List<Operative> getSupervisor()
-  {
-    List<Operative> newSupervisor = Collections.unmodifiableList(supervisor);
-    return newSupervisor;
-  }
-
-  public int numberOfSupervisor()
-  {
-    int number = supervisor.size();
+    int number = supervises.size();
     return number;
   }
 
-  public boolean hasSupervisor()
+  public boolean hasSupervises()
   {
-    boolean has = supervisor.size() > 0;
+    boolean has = supervises.size() > 0;
     return has;
   }
 
-  public int indexOfSupervisor(Operative aSupervisor)
+  public int indexOfSupervise(Operative aSupervise)
   {
-    int index = supervisor.indexOf(aSupervisor);
+    int index = supervises.indexOf(aSupervise);
     return index;
   }
 
-  public Operative getOperative(int index)
-  {
-    Operative aOperative = operatives.get(index);
-    return aOperative;
-  }
-
-  public List<Operative> getOperatives()
-  {
-    List<Operative> newOperatives = Collections.unmodifiableList(operatives);
-    return newOperatives;
-  }
-
-  public int numberOfOperatives()
-  {
-    int number = operatives.size();
-    return number;
-  }
-
-  public boolean hasOperatives()
-  {
-    boolean has = operatives.size() > 0;
-    return has;
-  }
-
-  public int indexOfOperative(Operative aOperative)
-  {
-    int index = operatives.indexOf(aOperative);
-    return index;
-  }
-
-  public boolean setMission(Mission aMission)
-  {
-    boolean wasSet = false;
-    Mission existingMission = mission;
-    mission = aMission;
-    if (existingMission != null && !existingMission.equals(aMission))
-    {
-      existingMission.removeOperative(this);
-    }
-    if (aMission != null)
-    {
-      aMission.addOperative(this);
-    }
-    wasSet = true;
-    return wasSet;
-  }
-
-  public static int minimumNumberOfSupervisor()
+  public static int minimumNumberOfSupervises()
   {
     return 0;
   }
 
-  public boolean addSupervisor(Operative aSupervisor)
+  public boolean addSupervise(Operative aSupervise)
   {
     boolean wasAdded = false;
-    if (supervisor.contains(aSupervisor)) { return false; }
-    supervisor.add(aSupervisor);
-    if (aSupervisor.indexOfOperative(this) != -1)
-    {
-      wasAdded = true;
-    }
-    else
-    {
-      wasAdded = aSupervisor.addOperative(this);
-      if (!wasAdded)
-      {
-        supervisor.remove(aSupervisor);
-      }
-    }
+    if (supervises.contains(aSupervise)) { return false; }
+    supervises.add(aSupervise);
+    wasAdded = true;
     return wasAdded;
   }
 
-  public boolean removeSupervisor(Operative aSupervisor)
+  public boolean removeSupervise(Operative aSupervise)
   {
     boolean wasRemoved = false;
-    if (!supervisor.contains(aSupervisor))
+    if (supervises.contains(aSupervise))
     {
-      return wasRemoved;
-    }
-
-    int oldIndex = supervisor.indexOf(aSupervisor);
-    supervisor.remove(oldIndex);
-    if (aSupervisor.indexOfOperative(this) == -1)
-    {
+      supervises.remove(aSupervise);
       wasRemoved = true;
-    }
-    else
-    {
-      wasRemoved = aSupervisor.removeOperative(this);
-      if (!wasRemoved)
-      {
-        supervisor.add(oldIndex,aSupervisor);
-      }
     }
     return wasRemoved;
   }
 
-  public boolean addSupervisorAt(Operative aSupervisor, int index)
+  public boolean addSuperviseAt(Operative aSupervise, int index)
   {  
     boolean wasAdded = false;
-    if(addSupervisor(aSupervisor))
+    if(addSupervise(aSupervise))
     {
       if(index < 0 ) { index = 0; }
-      if(index > numberOfSupervisor()) { index = numberOfSupervisor() - 1; }
-      supervisor.remove(aSupervisor);
-      supervisor.add(index, aSupervisor);
+      if(index > numberOfSupervises()) { index = numberOfSupervises() - 1; }
+      supervises.remove(aSupervise);
+      supervises.add(index, aSupervise);
       wasAdded = true;
     }
     return wasAdded;
   }
 
-  public boolean addOrMoveSupervisorAt(Operative aSupervisor, int index)
+  public boolean addOrMoveSuperviseAt(Operative aSupervise, int index)
   {
     boolean wasAdded = false;
-    if(supervisor.contains(aSupervisor))
+    if(supervises.contains(aSupervise))
     {
       if(index < 0 ) { index = 0; }
-      if(index > numberOfSupervisor()) { index = numberOfSupervisor() - 1; }
-      supervisor.remove(aSupervisor);
-      supervisor.add(index, aSupervisor);
+      if(index > numberOfSupervises()) { index = numberOfSupervises() - 1; }
+      supervises.remove(aSupervise);
+      supervises.add(index, aSupervise);
       wasAdded = true;
     } 
     else 
     {
-      wasAdded = addSupervisorAt(aSupervisor, index);
-    }
-    return wasAdded;
-  }
-
-  public static int minimumNumberOfOperatives()
-  {
-    return 0;
-  }
-
-  public boolean addOperative(Operative aOperative)
-  {
-    boolean wasAdded = false;
-    if (operatives.contains(aOperative)) { return false; }
-    operatives.add(aOperative);
-    if (aOperative.indexOfSupervisor(this) != -1)
-    {
-      wasAdded = true;
-    }
-    else
-    {
-      wasAdded = aOperative.addSupervisor(this);
-      if (!wasAdded)
-      {
-        operatives.remove(aOperative);
-      }
-    }
-    return wasAdded;
-  }
-
-  public boolean removeOperative(Operative aOperative)
-  {
-    boolean wasRemoved = false;
-    if (!operatives.contains(aOperative))
-    {
-      return wasRemoved;
-    }
-
-    int oldIndex = operatives.indexOf(aOperative);
-    operatives.remove(oldIndex);
-    if (aOperative.indexOfSupervisor(this) == -1)
-    {
-      wasRemoved = true;
-    }
-    else
-    {
-      wasRemoved = aOperative.removeSupervisor(this);
-      if (!wasRemoved)
-      {
-        operatives.add(oldIndex,aOperative);
-      }
-    }
-    return wasRemoved;
-  }
-
-  public boolean addOperativeAt(Operative aOperative, int index)
-  {  
-    boolean wasAdded = false;
-    if(addOperative(aOperative))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfOperatives()) { index = numberOfOperatives() - 1; }
-      operatives.remove(aOperative);
-      operatives.add(index, aOperative);
-      wasAdded = true;
-    }
-    return wasAdded;
-  }
-
-  public boolean addOrMoveOperativeAt(Operative aOperative, int index)
-  {
-    boolean wasAdded = false;
-    if(operatives.contains(aOperative))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfOperatives()) { index = numberOfOperatives() - 1; }
-      operatives.remove(aOperative);
-      operatives.add(index, aOperative);
-      wasAdded = true;
-    } 
-    else 
-    {
-      wasAdded = addOperativeAt(aOperative, index);
+      wasAdded = addSuperviseAt(aSupervise, index);
     }
     return wasAdded;
   }
 
   public void delete()
   {
-    if (mission != null)
-    {
-      Mission placeholderMission = mission;
-      this.mission = null;
-      placeholderMission.removeOperative(this);
-    }
-    ArrayList<Operative> copyOfSupervisor = new ArrayList<Operative>(supervisor);
-    supervisor.clear();
-    for(Operative aSupervisor : copyOfSupervisor)
-    {
-      aSupervisor.removeOperative(this);
-    }
-    ArrayList<Operative> copyOfOperatives = new ArrayList<Operative>(operatives);
-    operatives.clear();
-    for(Operative aOperative : copyOfOperatives)
-    {
-      aOperative.removeSupervisor(this);
-    }
+    supervises.clear();
   }
 
 
@@ -360,8 +175,7 @@ public class Operative
     return super.toString() + "["+
             "codeName" + ":" + getCodeName()+ "," +
             "privatePassword" + ":" + getPrivatePassword()+ "," +
-            "dynamicPassword" + ":" + getDynamicPassword()+ "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "mission = "+(getMission()!=null?Integer.toHexString(System.identityHashCode(getMission())):"null")
+            "dynamicPassword" + ":" + getDynamicPassword()+ "]"
      + outputString;
   }
 }

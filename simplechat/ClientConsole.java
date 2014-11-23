@@ -69,30 +69,7 @@ public class ClientConsole implements ChatIF
     try
     {
       BufferedReader fromConsole = 
-        new BufferedReader(new InputStreamReader(System.in));
-
-      String codeName;
-      String dynamicPassword;
-      String message;
-
-      System.out.println("Enter credentials.");
-      System.out.println("Code Name.");
-      codeName = fromConsole.readLine();
-      System.out.println("Code Name.");
-      dynamicPassword = fromConsole.readLine();
-
-      // If the first digit of operatives login is 1 then 
-      // the server is indicated that the operative is logging 
-      // in with their privatePassword    
-      if (String.valueOf(dynamicPassword.charAt(0)) == "1") {
-        client.handleMessageFromClientUI(new Operative(codeName,dynamicPassword,0));
-      } else {
-        client.handleMessageFromClientUI(new Operative(codeName,0,dynamicPassword));
-      }
-
-      System.out.println("Verifying credentials.");
-      
-
+        new BufferedReader(new InputStreamReader(System.in));  
 
       while (true) 
       {
@@ -144,3 +121,25 @@ public class ClientConsole implements ChatIF
   }
 }
 //End of ConsoleChat class
+
+
+// String codeName;
+// String dynamicPassword;
+// String message;
+
+// System.out.println("Enter credentials.");
+// System.out.println("Code Name.");
+// codeName = fromConsole.readLine();
+// System.out.println("Code Name.");
+// dynamicPassword = fromConsole.readLine();
+
+// // If the first digit of operatives login is 1 then 
+// // the server is indicated that the operative is logging 
+// // in with their privatePassword    
+// if (String.valueOf(dynamicPassword.charAt(0)) == "1") {
+//   client.handleMessageFromClientUI(new Operative(codeName,dynamicPassword,0));
+// } else {
+//   client.handleMessageFromClientUI(new Operative(codeName,0,dynamicPassword));
+// }
+
+// System.out.println("Verifying credentials.");
