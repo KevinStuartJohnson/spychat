@@ -66,14 +66,87 @@ public class ChatClient extends AbstractClient
    */
   public void handleMessageFromClientUI(Object msg)
   {
-    try
+
+    if (msg.equalsIgnoreCase("login")) {
+
+    }
+
+
+
+
+    if  (msg.charAt(0)== '#')
+    { 
+    if (msg.equalsIgnoreCase("#quit"))
+    {
+      clientUI.display("Client has ended session");
+      quit();
+      }
+    else if (msg.equalsIgnoreCase("#logoff"))
+    {
+      clientUI.display("Client has logged off");
+      try 
+      {
+        closeConnection();
+        } 
+      catch (IOException e) 
+      {   
+        e.printStackTrace();
+        }
+      }
+    else if (msg.startsWith("#sethost"))
+    {
+      String t = msg.substring(8);
+      t.trim();
+      setHost(t);
+      clientUI.display("Host has been set to " + getHost());
+      }
+    else if (msg.startsWith("#setport"))
+    {
+      String t= msg.substring(8);
+      t.trim();
+      int tInt = Integer.parseInt(t);
+      setPort(tInt);
+      clientUI.display("Port has been changed to " + getPort());
+      }
+    else if (msg.equalsIgnoreCase("#login"))
+    {
+      if (isConnected())
+      {
+      clientUI.display("Client has already Connected");
+      }
+      else
+        try
+      {
+          openConnection();
+          sendToServer("#login " + loginID);
+          }
+      catch(IOException e)
+      {
+      e.printStackTrace();
+      }
+      }
+    else if (msg.equalsIgnoreCase("#gethost"))
+    {
+      clientUI.display(getHost());
+      }
+    else if (msg.equalsIgnoreCase("#getport"))
+    {
+      clientUI.display(Integer.toString(getPort()));  
+      }
+    else 
+    {
+      clientUI.display("Server does not recognize command.");     
+      }
+    }
+    else
+      try
     {
       sendToServer(msg);
     }
     catch(IOException e)
     {
       clientUI.display
-        ("Could not send message to server.  Terminating client.");
+        ("Could not send msg to server.  Terminating client.");
       quit();
     }
   }
@@ -90,5 +163,13 @@ public class ChatClient extends AbstractClient
     catch(IOException e) {}
     System.exit(0);
   }
+
+  /**
+   * Get Objects from input stream. 
+   */
+  private Object getInput() {
+    return input.readObject();
+  }
 }
+
 //End of ChatClient class

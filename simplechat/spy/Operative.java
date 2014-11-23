@@ -25,7 +25,7 @@ public class Operative
   // CONSTRUCTOR
   //------------------------
 
-  public Operative(String aCodeName, String aPrivatePassword, String aDynamicPassword)
+  public Operative(String aCodeName, String aDynamicPassword)
   {
     codeName = aCodeName;
     privatePassword = aPrivatePassword;
@@ -69,6 +69,11 @@ public class Operative
   public String getPrivatePassword()
   {
     return privatePassword;
+  }
+
+  public void setPrivatePassword(String privatePassword)
+  {
+    this.privatePassword = privatePassword;
   }
 
   public String getDynamicPassword()
