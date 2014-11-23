@@ -47,12 +47,71 @@ public class EchoServer extends AbstractServer
    * @param msg The message received from the client.
    * @param client The connection from which the message originated.
    */
-  public void handleMessageFromClient
-    (Object msg, ConnectionToClient client)
+  public void handleMessageFromClient(Object msg)
   {
+    if (c=false){
+      if (msg instanceof Operative) {
+        for(a<length(currOperatives)){
+          if(currOperatives<a> == msg){
+            client.setInfo("String",msg.aCodeName);
+            this.sendToAllClients(client.getInfo("String") + " has been connected");
+            c=true;
+          }
+          else if(a<(length(currOperatives)-1)){
+          a++;
+          }
+          else {
+            for(b<length(privateOperatives)){
+              if(privateOperatives<b> == msg){
+                client.setInfo("String",msg.aCodeName);
+                this.sendToAllClients(client.getInfo("String") + " has been connected");
+                c=true;
+              }
+              else
+              {
+                b++;
+              }
+            }
+      else 
+      {
+        System.out.println("Server has stopped listening for connections.");
+      }}}}}
+      else{
+        if (msg instanceof Mission) {
+          Mission.add(msg);
+        }
+        if (msg instanceof String) {
+      if (msg.equals("#getmission")){
+        for(a<length(currOperatives)){
+          if(currOperatives<a> == msg){
+            client.setInfo("String",msg.aCodeName);
+            this.sendToAllClients(client.getInfo("String") + " has been connected");
+            c=true;
+          }
+          else if(a<(length(currOperatives)-1)){
+          a++;
+          }
+      }
+    }
+    if(A.a)
+    {
+      A t = msg.toString();
+      String login = t.subString(6);
+      String password=login.subString(8);
+      if(login==login.setID() && password==login.getpassword()){
+      logn.trim();
+      client.setInfo("String",logn);
+      this.sendToAllClients(client.getInfo("String") + " has been connected");
+      }
+    }
     System.out.println("Message received: " + msg + " from " + client);
     this.sendToAllClients(msg);
   }
+    else
+    {
+      System.out.println("Message received: " + msg + " from " + client.getInfo("String"));
+      this.sendToAllClients(client.getInfo("String") + ": " + msg);
+    }
     
   /**
    * This method overrides the one in the superclass.  Called
@@ -86,6 +145,24 @@ public class EchoServer extends AbstractServer
   public static void main(String[] args) 
   {
     int port = 0; //Port to listen on
+    int a = 0;
+    int b= 0;
+    boolean c=false;
+
+    ArrayList<Operative> currOperatives = new ArrayList();
+
+    currOperatives.add(new Operative("jimmmy","jhfsdh2"));
+    currOperatives.add(new Operative("jimgdfgmmy","4gtegdf"));
+    currOperatives.add(new Operative("jimfgfdgmmy","gdfg4"));
+    currOperatives.add(new Operative("jimfdgmmy","dfgdfgf"));
+
+
+    ArrayList<Operative> privateOperatives = new ArrayList();
+
+    privateOperatives.add(new Operative("jimmmy","5254345"));
+    privateOperatives.add(new Operative("jimgdfgmmy","5435428"));
+    privateOperatives.add(new Operative("jimfgfdgmmy","78637524"));
+    privateOperatives.add(new Operative("jimfdgmmy","57324257"));
 
     try
     {
