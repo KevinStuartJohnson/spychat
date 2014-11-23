@@ -27,12 +27,11 @@ public class Mission
   // CONSTRUCTOR
   //------------------------
 
-  public Mission(int aAssignmentDate, int aEndDate, String aDescription, String aMissionPassword)
+  public Mission(int aAssignmentDate, int aEndDate, String aDescription)
   {
     assignmentDate = aAssignmentDate;
     endDate = aEndDate;
     description = aDescription;
-    missionPassword = aMissionPassword;
     resources = new ArrayList<Resource>();
   }
 
