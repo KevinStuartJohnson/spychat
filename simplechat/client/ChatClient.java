@@ -8,6 +8,7 @@ import ocsf.client.*;
 import common.*;
 
 import java.io.*;
+import java.util.ArrayList;
 
 import spy.Mission;
 import spy.Operative;
@@ -66,12 +67,26 @@ public class ChatClient extends AbstractClient
   }
 
   /**
-   * This method handles all data coming from the UI  equalsIgnoreCase startsWith         
-   * sendToServer(message);
+   * This method handles all data coming from the UI.
+   * Possible client commands are;
+   * #Mission - returns missions of current operative 
+   * #CreateMission - Sends mission  with specified operative NOTE ARRAY LIST has 3 objects.
+   * #Validate - Sends operative to server to see if Operative is legit 
+   * #MissionComplete - Sends mission complete code         
+   * #CreateResource - Sends resouirce to be created by server.
+   * #CreateOperative - sends and Operative to be created in the server server 
+   * Note third element in array list is arraylist of other operatives 
+   * #Quit sends operative and disconnect message to server.
    * @param message The message from the UI.    
+   * @param operative who is using the chat.
    */
   public void handleMessageFromClientUI(Object msg, Operative operative)
   {
+	  
+	ArrayList<Object> twoThingsToSend = 
+			new ArrayList<Object>(); // An arrayList with two objects, the first is always the operative
+	twoThingsToSend.add(operative);
+	
 
     BufferedReader fromConsole = 
         new BufferedReader(new InputStreamReader(System.in));  
@@ -79,7 +94,8 @@ public class ChatClient extends AbstractClient
     try
     {
       if (msg.equals("#Mission")){
-    	 sendToServer(operative.getCodeName()); // Sends just the codeName of operative, server will send back mission
+    	 twoThingsToSend.add(msg);
+    	 sendToServer(twoThingsToSend); // Requests mission of operative 
       }
       
       if (msg.equals("#CreateMission")){
@@ -96,17 +112,39 @@ public class ChatClient extends AbstractClient
     	System.out.println("Enter description.");
     	String description = fromConsole.readLine();
     	
-    	sendToServer(new Mission(System.currentTimeMillis(),endDate,description));
+    	
+    	System.out.println("Enter operative code name.");
+    	
+    	String codeName = null;
+    	try {
+    		codeName = fromConsole.readLine();
+    	} catch(Exception e){
+    		System.out.println("Invalid entry.");
+    	}
+    	
+    	twoThingsToSend.add(new Mission(System.currentTimeMillis(),endDate,description)); // Startdate is always current time
+    	twoThingsToSend.add(codeName);
+    	sendToServer(twoThingsToSend); 
       }
       
       if (msg.equals("#Validate")) {
-    	  sendToServer(operative);
+    	  twoThingsToSend.add(operative);  // Sends double operative arrayList
+    	  sendToServer(twoThingsToSend); 
       }
 
       if (msg.equals("#MissionComplete")){
+    	  
     	  System.out.println("Enter mission complete password.");
-    	  String missionPassword = fromConsole.readLine();
-    	  sendToServer(missionPassword);
+    	  
+    	  String missionPassword = null;
+    	  try {
+    		  missionPassword = fromConsole.readLine();
+    	  } catch (Exception e){
+    		  System.out.println("Mission password of invalid type. Mission not completed.");
+    	  }
+    	  
+    	  twoThingsToSend.add(missionPassword);
+    	  sendToServer(twoThingsToSend); 
       }
 
       if (msg.equals("#CreateResource")){
@@ -138,7 +176,8 @@ public class ChatClient extends AbstractClient
     		  System.out.println("Resourse name invalid. Not resource created.");
     	  }
     	  
-    	  sendToServer(new Resource(resourceName,resourceLocation,resourcePrice));
+    	  twoThingsToSend.add(new Resource(resourceName,resourceLocation,resourcePrice));
+    	  sendToServer(twoThingsToSend); 
     	  
       }
       
@@ -159,16 +198,31 @@ public class ChatClient extends AbstractClient
     		  System.out.println("Pass word is invalid. No Operative created");
     	  }
     	  
-    	  sendToServer(new Operative(codeName,pWord));
+    	  boolean addMoreOperatives = true;
+    	  ArrayList<String> subordinates = new ArrayList<String>();
     	  
+    	  while (addMoreOperatives) {
+    		  System.out.println("Add subordinates? (y/n)");
+    		  if (fromConsole.readLine().equals("y")) {
+    			 System.out.println("Enter code name of subordinate.");
+    			 subordinates.add(fromConsole.readLine());
+    		  } else {
+    			 addMoreOperatives = false;
+    		  }
+    	  }
+    	  
+    	  twoThingsToSend.add(new Operative(codeName,pWord));
+    	  twoThingsToSend.add(subordinates);
+    	  sendToServer(twoThingsToSend); 
       }
       
       
       if (msg.equals("#Quit")){
-    	 sendToServer("Disconected");
-    	 // Quit or something.
+    	  twoThingsToSend.add("#Disconected");
+    	  sendToServer(twoThingsToSend); 
+
+    	 // Quit or something. 
       }
-      
       
     }
     catch(IOException e)

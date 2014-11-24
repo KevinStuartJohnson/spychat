@@ -139,38 +139,18 @@ public class Mission
 
   public Resource addResource(String aName, String aLocation, String aPrice)
   {
-    return new Resource(aName, aLocation, aPrice, this);
+    return new Resource(aName, aLocation, aPrice);
   }
 
   public boolean addResource(Resource aResource)
   {
     boolean wasAdded = false;
     if (resources.contains(aResource)) { return false; }
-    Mission existingMission = aResource.getMission();
-    boolean isNewMission = existingMission != null && !this.equals(existingMission);
-    if (isNewMission)
-    {
-      aResource.setMission(this);
-    }
-    else
-    {
-      resources.add(aResource);
-    }
+    resources.add(aResource);
     wasAdded = true;
     return wasAdded;
   }
 
-  public boolean removeResource(Resource aResource)
-  {
-    boolean wasRemoved = false;
-    //Unable to remove aResource, as it must always have a mission
-    if (!this.equals(aResource.getMission()))
-    {
-      resources.remove(aResource);
-      wasRemoved = true;
-    }
-    return wasRemoved;
-  }
 
   public boolean addResourceAt(Resource aResource, int index)
   {  
@@ -214,11 +194,7 @@ public class Mission
 
   public void delete()
   {
-    for(int i=resources.size(); i > 0; i--)
-    {
-      Resource aResource = resources.get(i - 1);
-      aResource.delete();
-    }
+	resources = null;
     operative = null;
   }
 
