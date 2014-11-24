@@ -99,6 +99,9 @@ public class ChatClient extends AbstractClient
     	sendToServer(new Mission(System.currentTimeMillis(),endDate,description));
       }
       
+      if (msg.equals("#Validate")) {
+    	  sendToServer(operative);
+      }
 
       if (msg.equals("#MissionComplete")){
     	  System.out.println("Enter mission complete password.");
@@ -110,7 +113,7 @@ public class ChatClient extends AbstractClient
     	  
     	  System.out.println("Enter resource name.");
     	  
-    	  String resourceName = null; // TAKE THESE OUT
+    	  String resourceName = null;
     	  try {
     		  resourceName = fromConsole.readLine();
     	  } catch (IOException e) {
@@ -142,16 +145,31 @@ public class ChatClient extends AbstractClient
       if (msg.equals("#CreateOperative")){
     	  System.out.println("Enter Operative codeName");
     	  
- 
+    	  String codeName = null;
     	  try {
-    		  String codeName = fromConsole.readLine(); 
+    		  codeName = fromConsole.readLine(); 
     	  } catch (Exception e) {
     		  System.out.println("Code Name not Valid. No Operative created.");
     	  }
-      }
-      if (msg.equals("#Quit")){
+    	  
+    	  String pWord = null;
+    	  try {
+    		  pWord = fromConsole.readLine();
+    	  } catch (Exception e) {
+    		  System.out.println("Pass word is invalid. No Operative created");
+    	  }
+    	  
+    	  sendToServer(new Operative(codeName,pWord));
     	  
       }
+      
+      
+      if (msg.equals("#Quit")){
+    	 sendToServer("Disconected");
+    	 // Quit or something.
+      }
+      
+      
     }
     catch(IOException e)
     {

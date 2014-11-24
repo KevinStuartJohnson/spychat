@@ -157,27 +157,41 @@ public class SecretServer extends AbstractServer
    */
   public static void main(String[] args) 
   {
-    int port = 0; //Port to listen on
+	  int port = 0; //Port to listen on
+	    currOperatives.add(new Operative("jimmmy","jhfsdh2"));
+	    currOperatives.add(new Operative("jimgdfgmmy","4gtegdf"));
+	    currOperatives.add(new Operative("jimfgfdgmmy","gdfg4"));
+	    currOperatives.add(new Operative("jimfdgmmy","dfgdfgf"));
+	    
+	    privateOperatives.add(new Operative("jimmmy","5254345"));
+	    privateOperatives.add(new Operative("jimgdfgmmy","5435428"));
+	    privateOperatives.add(new Operative("jimfgfdgmmy","78637524"));
+	    privateOperatives.add(new Operative("jimfdgmmy","57324257"));
 
-    try
-    {
-      port = Integer.parseInt(args[0]); //Get port from command line
-    }
-    catch(Throwable t)
-    {
-      port = DEFAULT_PORT; //Set port to 5555
-    }
-	
-    SecretServer sv = new SecretServer(port);
-    
-    try 
-    {
-      sv.listen(); //Start listening for connections
-    } 
-    catch (Exception ex) 
-    {
-      System.out.println("ERROR - Could not listen for clients!");
-    }
+	    missionOperatives.add(new Operative("jimmmy","sdfgfdsg"));
+	    missionOperatives.add(new Operative("jimgdfgmmy","sdfgfdsg"));
+	    missionOperatives.add(new Operative("jimfgfdgmmy","sdfgfds"));
+	    missionOperatives.add(new Operative("jimfdgmmy","57gfh7"));
+	    try
+	    {
+	      port = Integer.parseInt(args[0]); //Get port from command line
+	    }
+	    catch(Throwable t)
+	    {
+	      port = DEFAULT_PORT; //Set port to 5555
+	    }
+	 
+	    EchoServer sv = new EchoServer(port);
+	    
+	    try 
+	    {
+	      sv.listen(); //Start listening for connections
+	    } 
+	    catch (Exception ex) 
+	    {
+	      System.out.println("ERROR - Could not listen for clients!");
+	    }
+	  
   }
 }
 //End of EchoServer class
