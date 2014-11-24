@@ -80,149 +80,148 @@ public class ChatClient extends AbstractClient
    * @param message The message from the UI.    
    * @param operative who is using the chat.
    */
-  public void handleMessageFromClientUI(Object msg, Operative operative)
+  public void handleMessageFromClientUI(String msg, Operative operative)
   {
 	  
-	ArrayList<Object> twoThingsToSend = 
-			new ArrayList<Object>(); // An arrayList with two objects, the first is always the operative
-	twoThingsToSend.add(operative);
+	ArrayList<Object> thingsToSend = new ArrayList<Object>(); // An arrayList with multiple objects, the first is always the operative
+	thingsToSend.add(operative);
+	thingsToSend.add(msg);
 	
 
-    BufferedReader fromConsole = 
-        new BufferedReader(new InputStreamReader(System.in));  
+    BufferedReader fromConsole = new BufferedReader(new InputStreamReader(System.in));  
 
-    try
-    {
-      if (msg.equals("#Mission")){
-    	 twoThingsToSend.add(msg);
-    	 sendToServer(twoThingsToSend); // Requests mission of operative 
-      }
-      
-      if (msg.equals("#CreateMission")){
-    	  
-    	long endDate = System.currentTimeMillis() + 432000000; // Current time + 5 days 
-    	
-    	System.out.println("Enter completion date."); 
-    	
-    	try {
-    		endDate = Long.parseLong(fromConsole.readLine());
-    	}catch(Exception e){
-    		System.out.println("Mission end date must be a date.");
-    	}
-    	System.out.println("Enter description.");
-    	String description = fromConsole.readLine();
+    try {
     	
     	
-    	System.out.println("Enter operative code name.");
-    	
-    	String codeName = null;
-    	try {
-    		codeName = fromConsole.readLine();
-    	} catch(Exception e){
-    		System.out.println("Invalid entry.");
-    	}
-    	
-    	twoThingsToSend.add(new Mission(System.currentTimeMillis(),endDate,description)); // Startdate is always current time
-    	twoThingsToSend.add(codeName);
-    	sendToServer(twoThingsToSend); 
-      }
-      
-      if (msg.equals("#Validate")) {
-    	  twoThingsToSend.add(operative);  // Sends double operative arrayList
-    	  sendToServer(twoThingsToSend); 
-      }
+    	if (msg.equals("#Validate")) {
+       	  sendToServer(thingsToSend); // sends (Operative,#Validate)
+         }
 
-      if (msg.equals("#MissionComplete")){
-    	  
-    	  System.out.println("Enter mission complete password.");
-    	  
-    	  String missionPassword = null;
-    	  try {
-    		  missionPassword = fromConsole.readLine();
-    	  } catch (Exception e){
-    		  System.out.println("Mission password of invalid type. Mission not completed.");
-    	  }
-    	  
-    	  twoThingsToSend.add(missionPassword);
-    	  sendToServer(twoThingsToSend); 
-      }
-
-      if (msg.equals("#CreateResource")){
-    	  
-    	  System.out.println("Enter resource name.");
-    	  
-    	  String resourceName = null;
-    	  try {
-    		  resourceName = fromConsole.readLine();
-    	  } catch (IOException e) {
-    		  System.out.println("Resourse name invalid. Not resource created.");  
-    	  }
-
-    	  System.out.println("Enter resource location.");
-    	  
-    	  String resourceLocation = null;
-    	  try {
-    		  resourceLocation = fromConsole.readLine();
-    	  } catch(IOException e) {
-    		  System.out.println("Resourse name invalid. Not resource created.");
-    	  }
-    	  
-    	  System.out.println("Enter resource price.");
-    	  
-    	  String resourcePrice = null;
-    	  try {
-    		  resourcePrice = fromConsole.readLine();
-    	  } catch (IOException e) {
-    		  System.out.println("Resourse name invalid. Not resource created.");
-    	  }
-    	  
-    	  twoThingsToSend.add(new Resource(resourceName,resourceLocation,resourcePrice));
-    	  sendToServer(twoThingsToSend); 
-    	  
-      }
-      
-      if (msg.equals("#CreateOperative")){
-    	  System.out.println("Enter Operative codeName");
-    	  
-    	  String codeName = null;
-    	  try {
-    		  codeName = fromConsole.readLine(); 
-    	  } catch (Exception e) {
-    		  System.out.println("Code Name not Valid. No Operative created.");
-    	  }
-    	  
-    	  String pWord = null;
-    	  try {
-    		  pWord = fromConsole.readLine();
-    	  } catch (Exception e) {
-    		  System.out.println("Pass word is invalid. No Operative created");
-    	  }
-    	  
-    	  boolean addMoreOperatives = true;
-    	  ArrayList<String> subordinates = new ArrayList<String>();
-    	  
-    	  while (addMoreOperatives) {
-    		  System.out.println("Add subordinates? (y/n)");
-    		  if (fromConsole.readLine().equals("y")) {
-    			 System.out.println("Enter code name of subordinate.");
-    			 subordinates.add(fromConsole.readLine());
-    		  } else {
-    			 addMoreOperatives = false;
-    		  }
-    	  }
-    	  
-    	  twoThingsToSend.add(new Operative(codeName,pWord));
-    	  twoThingsToSend.add(subordinates);
-    	  sendToServer(twoThingsToSend); 
-      }
-      
-      
-      if (msg.equals("#Quit")){
-    	  twoThingsToSend.add("#Disconected");
-    	  sendToServer(twoThingsToSend); 
-
-    	 // Quit or something. 
-      }
+    
+	      if (msg.equals("#Mission")){
+	    	 sendToServer(thingsToSend); // sends (operative,"#Mission")
+	      }
+	      
+	      if (msg.equals("#CreateMission")){
+	    	
+	    	long endDate = System.currentTimeMillis() + 432000000; // Current time + 5 days 
+	    	
+	    	System.out.println("Enter completion date."); 
+	    	
+	    	try {
+	    		endDate = Long.parseLong(fromConsole.readLine());
+	    	}catch(Exception e){
+	    		System.out.println("Mission end date must be a date, 5 day default used.");
+	    	}
+	    	System.out.println("Enter description.");
+	    	String description = fromConsole.readLine();
+	    	
+	    	
+	    	System.out.println("Enter operative code name you want to do the mission.");
+	    	
+	    	String codeName = null;
+	    	try {
+	    		codeName = fromConsole.readLine();
+	    	} catch(Exception e){
+	    		System.out.println("Invalid entry.");
+	    	}
+	    	
+	    	thingsToSend.add(new Mission(System.currentTimeMillis(),endDate,description)); // Startdate is always current time
+	    	thingsToSend.add(codeName);
+	    	sendToServer(thingsToSend);  // sends (operative,#CreateMission,Mission,CodeName)
+	      }
+	      
+	      if (msg.equals("#MissionComplete")){
+	    	  
+	    	  System.out.println("Enter mission complete password.");
+	    	  
+	    	  String missionPassword = null;
+	    	  try {
+	    		  missionPassword = fromConsole.readLine();
+	    	  } catch (Exception e){
+	    		  System.out.println("Mission password of invalid type. Mission not completed.");
+	    	  }
+	    	  
+	    	  thingsToSend.add(missionPassword);
+	    	  sendToServer(thingsToSend); // Sends (operative,#MissionComplete,missionPassword) 
+	      }
+	
+	      if (msg.equals("#CreateResource")){
+	    	  
+	    	  System.out.println("Enter resource name.");
+	    	  
+	    	  String resourceName = null;
+	    	  try {
+	    		  resourceName = fromConsole.readLine();
+	    	  } catch (IOException e) {
+	    		  System.out.println("Resourse name invalid. Not resource created.");  
+	    	  }
+	
+	    	  System.out.println("Enter resource location.");
+	    	  
+	    	  String resourceLocation = null;
+	    	  try {
+	    		  resourceLocation = fromConsole.readLine();
+	    	  } catch(IOException e) {
+	    		  System.out.println("Resourse name invalid. Not resource created.");
+	    	  }
+	    	  
+	    	  System.out.println("Enter resource price.");
+	    	  
+	    	  String resourcePrice = null;
+	    	  try {
+	    		  resourcePrice = fromConsole.readLine();
+	    	  } catch (IOException e) {
+	    		  System.out.println("Resourse name invalid. Not resource created.");
+	    	  }
+	    	  
+	    	  thingsToSend.add(new Resource(resourceName,resourceLocation,resourcePrice));
+	    	  
+	    	  sendToServer(thingsToSend); // Sends (operative, #CreateResource, resource)
+	    	  
+	      }
+	      
+	      if (msg.equals("#CreateOperative")){
+	    	  
+	    	  System.out.println("Enter Operative codeName");
+	    	  
+	    	  String codeName = null;
+	    	  try {
+	    		  codeName = fromConsole.readLine(); 
+	    	  } catch (Exception e) {
+	    		  System.out.println("Code Name not Valid. No Operative created.");
+	    	  }
+	    	  
+	    	  String pWord = null;
+	    	  try {
+	    		  pWord = fromConsole.readLine();
+	    	  } catch (Exception e) {
+	    		  System.out.println("Pass word is invalid. No Operative created");
+	    	  }
+	    	  
+	    	  boolean addMoreOperatives = true;
+	    	  ArrayList<String> subordinates = new ArrayList<String>();
+	    	  
+	    	  while (addMoreOperatives) {
+	    		  System.out.println("Add subordinates? (y/n)");
+	    		  if (fromConsole.readLine().equals("y")) {
+	    			 System.out.println("Enter code name of subordinate.");
+	    			 subordinates.add(fromConsole.readLine());
+	    		  } else {
+	    			 addMoreOperatives = false;
+	    		  }
+	    	  }
+	    	  
+	    	  thingsToSend.add(new Operative(codeName,pWord));
+	    	  thingsToSend.add(subordinates);
+	    	  
+	    	  sendToServer(thingsToSend); // Sends (operative, #CreateOperative, Operative, Subordinates)
+	      }
+	      
+	      
+	      if (msg.equals("#Quit")){ 
+	    	  sendToServer(thingsToSend);  // Sends (operative, #Quit)
+	      }
       
     }
     catch(IOException e)

@@ -1,21 +1,13 @@
-// This file contains material supporting section 3.7 of the textbook:
-// "Object Oriented Software Engineering" and is issued under the open-source
-// license found at www.lloseng.com 
-
-import java.io.*;
 import ocsf.server.*;
+
 import java.util.*;
+
 import spy.*;
 
 /**
  * This class overrides some of the methods in the abstract 
  * superclass in order to give more functionality to the server.
  *
- * @author Dr Timothy C. Lethbridge
- * @author Dr Robert Lagani&egrave;re
- * @author Fran&ccedil;ois B&eacute;langer
- * @author Paul Holden
- * @version July 2000
  */
 public class SecretServer extends AbstractServer 
 {
@@ -28,7 +20,7 @@ public class SecretServer extends AbstractServer
 
 
   /**
-  * Server Lists
+  * Lists of data to be stored on server.
   */
 
   ArrayList<Operative> operatives = new ArrayList();
@@ -52,78 +44,255 @@ public class SecretServer extends AbstractServer
   
   //Instance methods ************************************************
   
+  public boolean addOperative(Operative aOperative)
+  {
+    boolean wasAdded = false;
+    if (operatives.contains(aOperative)) { 
+    	return false; 
+    } else {
+  		operatives.add(aOperative);
+  	}
+
+    wasAdded = true;
+    return wasAdded;
+  }
+  
+  public Operative getOperative(int index)
+  {
+    Operative aOperative = operatives.get(index);
+    return aOperative;
+  }
+
+  public List<Operative> getOperatives()
+  {
+    List<Operative> newOperatives = Collections.unmodifiableList(operatives);
+    return newOperatives;
+  }
+
+  public int numberOfOperatives()
+  {
+    int number = operatives.size();
+    return number;
+  }
+
+  public boolean hasOperatives()
+  {
+    boolean has = operatives.size() > 0;
+    return has;
+  }
+
+  public int indexOfOperative(Operative aOperative)
+  {
+    int index = operatives.indexOf(aOperative);
+    return index;
+  }
+  
+  public boolean addMission(Mission aMission)
+  {
+    boolean wasAdded = false;
+    if (missions.contains(aMission)) { 
+    	return false; 
+    	}
+    else
+    {
+      missions.add(aMission);
+    }
+    wasAdded = true;
+    return wasAdded;
+  }
+
+  public Mission getMission(int index)
+  {
+    Mission aMission = missions.get(index);
+    return aMission;
+  }
+
+  public List<Mission> getMissions()
+  {
+    List<Mission> newMissions = Collections.unmodifiableList(missions);
+    return newMissions;
+  }
+
+  public int numberOfMissions()
+  {
+    int number = missions.size();
+    return number;
+  }
+
+  public boolean hasMissions()
+  {
+    boolean has = missions.size() > 0;
+    return has;
+  }
+
+  public int indexOfMission(Mission aMission)
+  {
+    int index = missions.indexOf(aMission);
+    return index;
+  }
+  
+  public boolean addResource(Resource aResource)
+  {
+    boolean wasAdded = false;
+    if (resources.contains(aResource)) { 
+    	return false; 
+    } else
+    {
+      resources.add(aResource);
+    }
+    wasAdded = true;
+    return wasAdded;
+  }
+
+  public Resource getResource(int index)
+  {
+    Resource aResource = resources.get(index);
+    return aResource;
+  }
+
+  public List<Resource> getResources()
+  {
+    List<Resource> newResources = Collections.unmodifiableList(resources);
+    return newResources;
+  }
+
+  public int numberOfResources()
+  {
+    int number = resources.size();
+    return number;
+  }
+
+  public boolean hasResources()
+  {
+    boolean has = resources.size() > 0;
+    return has;
+  }
+
+  public int indexOfResource(Resource aResource)
+  {
+    int index = resources.indexOf(aResource);
+    return index;
+  }
+
+  public static int minimumNumberOfOperatives()
+  {
+    return 0;
+  }
+  
+
+  public static int minimumNumberOfMissions()
+  {
+    return 0;
+  }
+
+
+  public static int minimumNumberOfResources()
+  {
+    return 0;
+  }
+
+  @Override
+  protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
+  	// TODO Auto-generated method stub
+  	
+  }
+  
+  
   /**
    * This method handles any messages received from the client.
+   * #Mission - returns missions of current operative 
+   * #CreateMission - Sends mission  with specified operative NOTE ARRAY LIST has 3 objects.
+   * #Validate - Sends operative to server to see if Operative is legit 
+   * #MissionComplete - Sends mission complete code         
+   * #CreateResource - Sends resouirce to be created by server.
+   * #CreateOperative - sends and Operative to be created in the server server 
+   * Note third element in array list is arraylist of other operatives 
+   * #Quit sends operative and disconnect message to server.
    *
    * @param msg The message received from the client.
    * @param client The connection from which the message originated.
    */
-  public void handleMessageFromClient
-  		(Object msg, ConnectionToClient client)
-  {
-	
-	  int a = 0;
-	    int b = 0;
-	    int c = 0;
-	    int e = 0 ;
-	    if (d=false && dcount<1 && pcount<1){
-	      if (msg instanceof Operative) {
-	        while(a < currOperatives.size()){
-	          if(currOperatives.get(a).equals(msg)){
-	            //Operative client = msg;
-	            this.sendToAllClients(msg.getCodeName() + " has been connected");
-	            d=true;
-	            dcount++;
-	          }
-	          else if(a < currOperatives.size()-1){
-	          a++;
-	          }
-	          else {
-	            while(b< privateOperatives.size()){
-	              if(privateOperatives.get(b).equals(msg)){
-	                //Operative client=msg;
-	                this.sendToAllClients("waring");
-	                d=true;
-	                pcount++;
-	              }
-	              else if(b< privateOperatives.size()-1){
-	                b++;
-	              }
-	              while(c< missionOperatives.size()){
-	                  if(missionOperatives.get(c).equals(msg) && mcount<1){
-	                    System.out.println(msg.getCodeName() + " has completed the mission");
-	                    setDymaticPassword(msg);
-	                    int pa = getDymaticPassword(msg);
-	                    System.out.println("yout new dymatic password will be" + pa);
-	                  }
-	                  else if(missionOperatives.get(c).equals(msg) && mcount>1){
-	                    System.out.println("warning");
-	                  }
-	                  else{
-	                  c++; 
-	                  }}}}}}
-	      else 
-	      {
-	        System.out.println("Server has stopped listening for connections.");
-	      }}
-	      else{
-	        if (msg instanceof Mission) {
-	          MissionList.add(msg);
-	        }
-	        else if (msg instanceof String) {
-	          if (msg.toString().startsWith("#getmission")){
-	            while(e<MissionList.size()){
-	              if(MissionList.get(e).getOperative().getCodeName().equals(client.getCodeName())){
-	                Mission a=MissionList.get(e).Mission;
-	                System.out.println("aAssignment Date"+a.aAssignmentDate + "EndDate"+a.aEndDate + "description" + a.aDescription);
-	              }
-	            }  
-	          }
-	      }
-	    }  
-	  
-    System.out.println("Message received: " + msg + " from " + client);
-    this.sendToAllClients(msg);
+  @SuppressWarnings("unchecked")
+public void handleMessageFromClient(ArrayList<Object> list, ConnectionToClient client) {
+	  try {
+		  
+		  
+		  
+		  if (list.get(2).equals("#Validate")) {
+			  
+			  /*
+			   * Check to see if operative is in operatives list.
+			   * If they are, move them to activeOperatives list.
+			   * If not, disconnect client.
+			   */
+			  
+		  }
+		  
+		  if (list.get(2).equals("#Mission")) {
+			  
+			  /*
+			   * We can assume that the operative is valide 
+			   * so all we have to do is look for that operative in 
+			   * mission list and return their mission
+			   */
+			  
+		  }
+		  
+		  if (list.get(2).equals("#CreateMission")) {
+			  
+			  /*
+			   * Add a new mission to the mission list with the info 
+			   * int the list 
+			   */
+			  
+		  }
+		  
+		  if (list.get(2).equals("#MissionComplete")) {
+			  
+			  /*
+			   * Search mission list for mission with mission complete 
+			   * password. If found, tell the user success and delete that 
+			   * mission from the mission list
+			   */
+			  
+		  }
+		  
+		  if (list.get(2).equals("#CreateResource")) {
+			  
+			  /*
+			   * add a new reseource to the resource list with info from the list
+			   */
+			  
+		  }
+		  
+		  if (list.get(2).equals("#CreateOperative")) {
+			  
+			  /*
+			   * Add a new operative with info from the list 
+			   * NOTE that the arraylist has an arraylist in it with all the 
+			   * subordinates for the new operative to be created 
+			   */
+			  
+		  }
+		  
+		  if (list.get(2).equals("#Quit")) {
+			  /*
+			   * Move operative back to operative list 
+			   * End client connection
+			   */
+			  
+		  }
+		  
+		  
+		  
+		  
+	  } catch (Exception e) {
+		  
+		  /*
+		   * Type send some thing to client 
+		   */
+		  
+	  }
   }
     
   /**
@@ -158,20 +327,6 @@ public class SecretServer extends AbstractServer
   public static void main(String[] args) 
   {
 	  int port = 0; //Port to listen on
-	    currOperatives.add(new Operative("jimmmy","jhfsdh2"));
-	    currOperatives.add(new Operative("jimgdfgmmy","4gtegdf"));
-	    currOperatives.add(new Operative("jimfgfdgmmy","gdfg4"));
-	    currOperatives.add(new Operative("jimfdgmmy","dfgdfgf"));
-	    
-	    privateOperatives.add(new Operative("jimmmy","5254345"));
-	    privateOperatives.add(new Operative("jimgdfgmmy","5435428"));
-	    privateOperatives.add(new Operative("jimfgfdgmmy","78637524"));
-	    privateOperatives.add(new Operative("jimfdgmmy","57324257"));
-
-	    missionOperatives.add(new Operative("jimmmy","sdfgfdsg"));
-	    missionOperatives.add(new Operative("jimgdfgmmy","sdfgfdsg"));
-	    missionOperatives.add(new Operative("jimfgfdgmmy","sdfgfds"));
-	    missionOperatives.add(new Operative("jimfdgmmy","57gfh7"));
 	    try
 	    {
 	      port = Integer.parseInt(args[0]); //Get port from command line
@@ -181,7 +336,12 @@ public class SecretServer extends AbstractServer
 	      port = DEFAULT_PORT; //Set port to 5555
 	    }
 	 
-	    EchoServer sv = new EchoServer(port);
+	    SecretServer sv = new SecretServer(port);
+	    
+	    /*
+	     *  Here we will create some fake lists of operative and 
+	     *  stuff.  
+	     */
 	    
 	    try 
 	    {
@@ -193,5 +353,6 @@ public class SecretServer extends AbstractServer
 	    }
 	  
   }
+
 }
 //End of EchoServer class
