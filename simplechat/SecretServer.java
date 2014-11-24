@@ -220,6 +220,12 @@ public void handleMessageFromClient(ArrayList<Object> list, ConnectionToClient c
 		  
 		  if (list.get(2).equals("#Validate")) {
 			  
+			  
+			  if (this.operatives.contains(list.get(1))){
+				  this.activeOperatives.add((Operative) list.get(1));
+			  } else {
+				  client.close();
+			  }
 			  /*
 			   * Check to see if operative is in operatives list.
 			   * If they are, move them to activeOperatives list.
@@ -229,6 +235,7 @@ public void handleMessageFromClient(ArrayList<Object> list, ConnectionToClient c
 		  }
 		  
 		  if (list.get(2).equals("#Mission")) {
+			  
 			  
 			  /*
 			   * We can assume that the operative is valide 
@@ -337,6 +344,8 @@ public void handleMessageFromClient(ArrayList<Object> list, ConnectionToClient c
 	    }
 	 
 	    SecretServer sv = new SecretServer(port);
+	    
+//	    sv.missions.add(new Mission(dsgjjdfgjdf))
 	    
 	    /*
 	     *  Here we will create some fake lists of operative and 
