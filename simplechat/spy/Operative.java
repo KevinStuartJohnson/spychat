@@ -1,6 +1,6 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.21.0.4789 modeling language!*/
-
+package spy;
 
 import java.util.*;
 

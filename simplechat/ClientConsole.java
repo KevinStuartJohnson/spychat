@@ -3,6 +3,7 @@
 // license found at www.lloseng.com 
 
 import java.io.*;
+
 import client.*;
 import common.*;
 import spy.*;
@@ -32,7 +33,8 @@ public class ClientConsole implements ChatIF
   /**
    * The instance of the client that created this ConsoleChat.
    */
-  ChatClient client;
+  static ChatClient client;
+  
 
   
   //Constructors ****************************************************
@@ -64,17 +66,18 @@ public class ClientConsole implements ChatIF
    * This method waits for input from the console.  Once it is 
    * received, it sends it to the client's message handler.
    */
-  public void accept() 
+  public void accept(Operative operative) 
   {
     try
     {
       BufferedReader fromConsole = 
         new BufferedReader(new InputStreamReader(System.in));  
-
+      String message;
+      
       while (true) 
       {
         message = fromConsole.readLine();
-        client.handleMessageFromClientUI(message);
+        client.handleMessageFromClientUI(message,operative);
       }
     } 
     catch (Exception ex) 
@@ -103,13 +106,9 @@ public class ClientConsole implements ChatIF
    *
    * @param args[0] The host to connect to.
    */
-  public static void main(String[] args) 
+  public static void main(String[] args) throws IOException 
   {
     String host = "";
-    String codeName;
-    String dynamicPassword;
-    String message;
-    int port = 0;  //The port number
 
     try
     {
@@ -119,35 +118,32 @@ public class ClientConsole implements ChatIF
     {
       host = "localhost";
     }
+    
     ClientConsole chat= new ClientConsole(host, DEFAULT_PORT);
-
-
-    System.out.println("Enter credentials.");
-    System.out.println("Code Name.");
-    codeName = fromConsole.readLine();
-    System.out.println("Code Name.");
-    dynamicPassword = fromConsole.readLine();
-
-    // If the first digit of operatives login is 1 then 
-    // the server is indicated that the operative is logging 
-    // in with their privatePassword    
-    if (String.valueOf(dynamicPassword.charAt(0)) == "1") {
-      client.handleMessageFromClientUI(new Operative(codeName,dynamicPassword,0));
-    } else {
-      client.handleMessageFromClientUI(new Operative(codeName,0,dynamicPassword));
-    }
-
-    System.out.println("Verifying credentials.");
-
-    while (!(chat.getInput() instanceof Boolean)) {
-      thread.sleep(1000);
-    }
-
-    if (!chat.getInput()) {
-      quit();
-    }
-
-    chat.accept();  //Wait for console data
+    
+    BufferedReader fromConsole = 
+            new BufferedReader(new InputStreamReader(System.in));  
+    
+    String codeName = null;
+	try {
+		codeName = fromConsole.readLine();
+	} catch (IOException e) {
+		System.out.println("CodeName invalid. Session disconnected.");
+		client.quit();
+	}
+    String pWord = null;
+	try {
+		pWord = fromConsole.readLine();
+	} catch (IOException e) {
+		System.out.println("Password invalid. Session disconnected.");
+		client.quit();
+	}
+    
+    Operative operative = new Operative(codeName,pWord);
+    
+    client.handleMessageFromClientUI("#Validate",operative);
+    
+    chat.accept(operative);  //Wait for console data
   }
 }
 //End of ConsoleChat class
@@ -155,25 +151,3 @@ public class ClientConsole implements ChatIF
 
 
 
-
-
-// String codeName;
-// String dynamicPassword;
-// String message;
-
-// System.out.println("Enter credentials.");
-// System.out.println("Code Name.");
-// codeName = fromConsole.readLine();
-// System.out.println("Code Name.");
-// dynamicPassword = fromConsole.readLine();
-
-// // If the first digit of operatives login is 1 then 
-// // the server is indicated that the operative is logging 
-// // in with their privatePassword    
-// if (String.valueOf(dynamicPassword.charAt(0)) == "1") {
-//   client.handleMessageFromClientUI(new Operative(codeName,dynamicPassword,0));
-// } else {
-//   client.handleMessageFromClientUI(new Operative(codeName,0,dynamicPassword));
-// }
-
-// System.out.println("Verifying credentials.");

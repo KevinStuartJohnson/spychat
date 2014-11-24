@@ -1,6 +1,6 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.21.0.4789 modeling language!*/
-
+package spy;
 
 import java.util.*;
 
@@ -14,8 +14,8 @@ public class Mission
   //------------------------
 
   //Mission Attributes
-  private int assignmentDate;
-  private int endDate;
+  private long assignmentDate;
+  private long endDate;
   private String description;
   private String missionPassword;
 
@@ -27,7 +27,7 @@ public class Mission
   // CONSTRUCTOR
   //------------------------
 
-  public Mission(int aAssignmentDate, int aEndDate, String aDescription)
+  public Mission(long aAssignmentDate, long aEndDate, String aDescription)
   {
     assignmentDate = aAssignmentDate;
     endDate = aEndDate;
@@ -47,7 +47,7 @@ public class Mission
     return wasSet;
   }
 
-  public boolean setEndDate(int aEndDate)
+  public boolean setEndDate(long aEndDate)
   {
     boolean wasSet = false;
     endDate = aEndDate;
@@ -71,12 +71,12 @@ public class Mission
     return wasSet;
   }
 
-  public int getAssignmentDate()
+  public long getAssignmentDate()
   {
     return assignmentDate;
   }
 
-  public int getEndDate()
+  public long getEndDate()
   {
     return endDate;
   }

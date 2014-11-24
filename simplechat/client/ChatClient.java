@@ -6,7 +6,12 @@ package client;
 
 import ocsf.client.*;
 import common.*;
+
 import java.io.*;
+
+import spy.Mission;
+import spy.Operative;
+import spy.Resource;
 
 /**
  * This class overrides some of the methods defined in the abstract
@@ -26,6 +31,7 @@ public class ChatClient extends AbstractClient
    * the display method in the client.
    */
   ChatIF clientUI; 
+  Operative operative;
 
   
   //Constructors ****************************************************
@@ -60,95 +66,99 @@ public class ChatClient extends AbstractClient
   }
 
   /**
-   * This method handles all data coming from the UI            
-   *
+   * This method handles all data coming from the UI  equalsIgnoreCase startsWith         
+   * sendToServer(message);
    * @param message The message from the UI.    
    */
-  public void handleMessageFromClientUI(Object msg)
+  public void handleMessageFromClientUI(Object msg, Operative operative)
   {
 
-    if (msg.equalsIgnoreCase("login")) {
+    BufferedReader fromConsole = 
+        new BufferedReader(new InputStreamReader(System.in));  
 
-    }
+    try
+    {
+      if (msg.equals("#Mission")){
+    	 sendToServer(operative.getCodeName()); // Sends just the codeName of operative, server will send back mission
+      }
+      
+      if (msg.equals("#CreateMission")){
+    	  
+    	long endDate = System.currentTimeMillis() + 432000000; // Current time + 5 days 
+    	
+    	System.out.println("Enter completion date."); 
+    	
+    	try {
+    		endDate = Long.parseLong(fromConsole.readLine());
+    	}catch(Exception e){
+    		System.out.println("Mission end date must be a date.");
+    	}
+    	System.out.println("Enter description.");
+    	String description = fromConsole.readLine();
+    	
+    	sendToServer(new Mission(System.currentTimeMillis(),endDate,description));
+      }
+      
 
+      if (msg.equals("#MissionComplete")){
+    	  System.out.println("Enter mission complete password.");
+    	  String missionPassword = fromConsole.readLine();
+    	  sendToServer(missionPassword);
+      }
 
+      if (msg.equals("#CreateResource")){
+    	  
+    	  System.out.println("Enter resource name.");
+    	  
+    	  String resourceName = null; // TAKE THESE OUT
+    	  try {
+    		  resourceName = fromConsole.readLine();
+    	  } catch (IOException e) {
+    		  System.out.println("Resourse name invalid. Not resource created.");  
+    	  }
 
-
-    if  (msg.charAt(0)== '#')
-    { 
-    if (msg.equalsIgnoreCase("#quit"))
-    {
-      clientUI.display("Client has ended session");
-      quit();
+    	  System.out.println("Enter resource location.");
+    	  
+    	  String resourceLocation = null;
+    	  try {
+    		  resourceLocation = fromConsole.readLine();
+    	  } catch(IOException e) {
+    		  System.out.println("Resourse name invalid. Not resource created.");
+    	  }
+    	  
+    	  System.out.println("Enter resource price.");
+    	  
+    	  String resourcePrice = null;
+    	  try {
+    		  resourcePrice = fromConsole.readLine();
+    	  } catch (IOException e) {
+    		  System.out.println("Resourse name invalid. Not resource created.");
+    	  }
+    	  
+    	  sendToServer(new Resource(resourceName,resourceLocation,resourcePrice));
+    	  
       }
-    else if (msg.equalsIgnoreCase("#logoff"))
-    {
-      clientUI.display("Client has logged off");
-      try 
-      {
-        closeConnection();
-        } 
-      catch (IOException e) 
-      {   
-        e.printStackTrace();
-        }
+      
+      if (msg.equals("#CreateOperative")){
+    	  System.out.println("Enter Operative codeName");
+    	  
+ 
+    	  try {
+    		  String codeName = fromConsole.readLine(); 
+    	  } catch (Exception e) {
+    		  System.out.println("Code Name not Valid. No Operative created.");
+    	  }
       }
-    else if (msg.startsWith("#sethost"))
-    {
-      String t = msg.substring(8);
-      t.trim();
-      setHost(t);
-      clientUI.display("Host has been set to " + getHost());
+      if (msg.equals("#Quit")){
+    	  
       }
-    else if (msg.startsWith("#setport"))
-    {
-      String t= msg.substring(8);
-      t.trim();
-      int tInt = Integer.parseInt(t);
-      setPort(tInt);
-      clientUI.display("Port has been changed to " + getPort());
-      }
-    else if (msg.equalsIgnoreCase("#login"))
-    {
-      if (isConnected())
-      {
-      clientUI.display("Client has already Connected");
-      }
-      else
-        try
-      {
-          openConnection();
-          sendToServer("#login " + loginID);
-          }
-      catch(IOException e)
-      {
-      e.printStackTrace();
-      }
-      }
-    else if (msg.equalsIgnoreCase("#gethost"))
-    {
-      clientUI.display(getHost());
-      }
-    else if (msg.equalsIgnoreCase("#getport"))
-    {
-      clientUI.display(Integer.toString(getPort()));  
-      }
-    else 
-    {
-      clientUI.display("Server does not recognize command.");     
-      }
-    }
-    else
-      try
-    {
-      sendToServer(msg);
     }
     catch(IOException e)
     {
       clientUI.display
-        ("Could not send msg to server.  Terminating client.");
-      quit();
+        ("Could not send message to server.");
     }
+
   }
   
   /**
@@ -162,13 +172,6 @@ public class ChatClient extends AbstractClient
     }
     catch(IOException e) {}
     System.exit(0);
-  }
-
-  /**
-   * Get Objects from input stream. 
-   */
-  private Object getInput() {
-    return input.readObject();
   }
 }
 
