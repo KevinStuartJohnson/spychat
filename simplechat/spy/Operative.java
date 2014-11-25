@@ -86,6 +86,10 @@ public class Operative
     List<Operative> newSupervises = Collections.unmodifiableList(supervises);
     return newSupervises;
   }
+  
+  public void setSupervises(List<Operative> supervises) {
+	  this.supervises = supervises;
+  }
 
   public int numberOfSupervises()
   {
