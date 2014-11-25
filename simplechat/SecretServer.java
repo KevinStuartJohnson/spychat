@@ -214,80 +214,95 @@ public class SecretServer extends AbstractServer
    */
   @SuppressWarnings("unchecked")
 public void handleMessageFromClient(ArrayList<Object> list, ConnectionToClient client) {
-	  try {
-		  
-		  
-		  
-		  if (list.get(2).equals("#Validate")) {
-			  
-			  
+	  try {	
+		  if (list.get(2).equals("#Validate")) { 
 			  if (this.operatives.contains(list.get(1))){
 				  this.activeOperatives.add((Operative) list.get(1));
 			  } else {
+				  System.out.println("i don't know you, sorry");
 				  client.close();
-			  }
+			  }}
 			  /*
 			   * Check to see if operative is in operatives list.
 			   * If they are, move them to activeOperatives list.
 			   * If not, disconnect client.
+			   * list(operative(codename,password))
 			   */
-			  
-		  }
-		  
 		  if (list.get(2).equals("#Mission")) {
-			  
-			  
+			  if(this.missions.get(1).equals(list.get(1))){
+				  System.out.println("mission is " + list.get(2));
+			  }
+			  else{
+				  System.out.println("i don't understand the question,");
+				  System.out.println("Counld i have more information?");
+			  }			  
 			  /*
 			   * We can assume that the operative is valide 
 			   * so all we have to do is look for that operative in 
 			   * mission list and return their mission
-			   */
-			  
+			   * list(operative,#Mission)
+			   */  
 		  }
-		  
 		  if (list.get(2).equals("#CreateMission")) {
-			  
+			  this.addMission((Mission) list.get(3));
 			  /*
 			   * Add a new mission to the mission list with the info 
 			   * int the list 
-			   */
-			  
+			   * list(operative,#CreateMission,mission(aAssignmentDate,aEndDate,aDescription))
+			   */  
 		  }
 		  
 		  if (list.get(2).equals("#MissionComplete")) {
-			  
+			  if(this.missions.get(3).equals(list.get(3))){
+				  System.out.println("succes");
+				  this.missions.clear();
+			  }
+			  else{
+				  System.out.println("i don't understand the question,");
+				  System.out.println("Counld i have more information?");
+			  }
 			  /*
 			   * Search mission list for mission with mission complete 
 			   * password. If found, tell the user success and delete that 
 			   * mission from the mission list
+			   * list(operative,#MissionComplete,missionpassword)
 			   */
-			  
-		  }
-		  
+		  } 
 		  if (list.get(2).equals("#CreateResource")) {
-			  
+			  if(!this.resources.add((Resource) list.get(3))){
+				  this.resources.add((int) list.get(3),(Resource)list.get(4));
+			  }
+			  else{
+				  System.out.println("we already have this resource");  
+			  }
 			  /*
 			   * add a new reseource to the resource list with info from the list
+			   * list(operative,#CreateResource,(int) position, nameofresource)
 			   */
 			  
 		  }
 		  
 		  if (list.get(2).equals("#CreateOperative")) {
-			  
+			  if(!this.operatives.add((Operative) list.get(3))){
+				  this.operatives.add((int) list.get(3),(Operative)list.get(4));
+			  }
+			  else{
+				  System.out.println("Unkonw method"); 
+			  }
 			  /*
 			   * Add a new operative with info from the list 
 			   * NOTE that the arraylist has an arraylist in it with all the 
 			   * subordinates for the new operative to be created 
+			   * list(operative,#CreateOperative,position(int), operative(codename))
 			   */
-			  
 		  }
-		  
 		  if (list.get(2).equals("#Quit")) {
+			  this.activeOperatives.remove(list.get(1));
 			  /*
 			   * Move operative back to operative list 
 			   * End client connection
-			   */
-			  
+			   * list(operative,#Quit)
+			   */		  
 		  }
 		  
 		  
@@ -344,8 +359,6 @@ public void handleMessageFromClient(ArrayList<Object> list, ConnectionToClient c
 	    }
 	 
 	    SecretServer sv = new SecretServer(port);
-	    
-//	    sv.missions.add(new Mission(dsgjjdfgjdf))
 	    
 	    /*
 	     *  Here we will create some fake lists of operative and 
