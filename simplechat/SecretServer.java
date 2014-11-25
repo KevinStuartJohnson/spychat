@@ -359,7 +359,40 @@ public void handleMessageFromClient(ArrayList<Object> list, ConnectionToClient c
 	    }
 	 
 	    SecretServer sv = new SecretServer(port);
+	    Operative operativea = new Operative("Magician", "29491031mg");
+	    Operative operativeb = new Operative("Hunter", "41591955ht");
+	    Operative operativec = new Operative("Player", "15619211py");
+	    Operative operatived = new Operative("Climber", "54815835cm");
+	    Operative operativee = new Operative("Ascetic", "15858465ac");
 	    
+	    sv.operatives.add(1,operativea);
+	    sv.operatives.add(2,operativeb);
+	    sv.operatives.add(3,operativec);
+	    sv.operatives.add(4,operatived);
+	    sv.operatives.add(5,operativee);
+	    
+	    Mission missiona=new Mission(31/21/2014,5/1/2015,"kill the morkingbird");
+	    Mission missionb=new Mission(15/1/2015,25/1/2015,"kill the messenge");
+	    Mission missionc=new Mission(3/2/2015,15/2/2015,"kill the noise");
+	    Mission missiond=new Mission(1/3/2014,1/2/2015,"kill the moon");
+	    
+        sv.missions.add(1,missiona);
+        sv.missions.add(2,missionb);
+        sv.missions.add(3,missionc);
+        sv.missions.add(4,missiond);
+        
+        Resource resourcea = new Resource("AIRE" ,"Carnac Stones,France" ,"$14M");
+        Resource resourceb = new Resource("Ship" ,"The Devil’s Sea" ,"$54M");
+        Resource resourcec = new Resource("Pharaoh's Scepter" ,"Nile River,Giza" ,"$15M");
+        Resource resourced = new Resource("Batmobile" ,"Gotham City,US" ,"$8M");
+        
+        sv.resources.add(resourcea);
+        sv.resources.add(resourceb);
+        sv.resources.add(resourcec);
+        sv.resources.add(resourced);
+        
+        
+        
 	    /*
 	     *  Here we will create some fake lists of operative and 
 	     *  stuff.  
