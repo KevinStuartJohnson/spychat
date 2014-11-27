@@ -2,18 +2,23 @@
 /*This code was generated using the UMPLE 1.21.0.4789 modeling language!*/
 package spy;
 
+import java.io.Serializable;
 import java.util.*;
 
 // line 10 "model.ump"
 // line 33 "model.ump"
-public class Mission
+public class Mission implements Serializable
 {
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
-  //Mission Attributes
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+//Mission Attributes
   private long assignmentDate;
   private long endDate;
   private String description;

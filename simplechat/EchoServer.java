@@ -1,15 +1,28 @@
+// This file contains material supporting section 3.7 of the textbook:
+// "Object Oriented Software Engineering" and is issued under the open-source
+// license found at www.lloseng.com 
+
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import ocsf.server.*;
-
-import java.util.*;
-
-import spy.*;
+import spy.Mission;
+import spy.Operative;
+import spy.Resource;
 
 /**
  * This class overrides some of the methods in the abstract 
  * superclass in order to give more functionality to the server.
  *
+ * @author Dr Timothy C. Lethbridge
+ * @author Dr Robert Lagani&egrave;re
+ * @author Fran&ccedfsdfdil;ois B&eacute;langer
+ * @author Paul Holden
+ * @version July 2000
  */
-public class SecretServer extends AbstractServer 
+public class EchoServer extends AbstractServer 
 {
   //Class variables *************************************************
   
@@ -17,17 +30,17 @@ public class SecretServer extends AbstractServer
    * The default port to listen on.
    */
   final public static int DEFAULT_PORT = 5555;
-
-
+  
   /**
   * Lists of data to be stored on server.
   */
 
-  ArrayList<Operative> operatives = new ArrayList();
-  ArrayList<Operative> activeOperatives = new ArrayList();
-  ArrayList<Mission>  missions = new ArrayList();
-  ArrayList<Resource> resources = new ArrayList();
-  ArrayList<String> privatePasswords = new ArrayList();
+  ArrayList<Operative> operatives = new ArrayList<Operative>(500); 
+  ArrayList<Operative> activeOperatives = new ArrayList<Operative>();
+  ArrayList<Mission>  missions = new ArrayList<Mission>();
+  ArrayList<Resource> resources = new ArrayList<Resource>();
+  ArrayList<String> privatePasswords = new ArrayList<String>(); 
+  
   
   //Constructors ****************************************************
   
@@ -36,7 +49,7 @@ public class SecretServer extends AbstractServer
    *
    * @param port The port number to connect on.
    */
-  public SecretServer(int port) 
+  public EchoServer(int port) 
   {
     super(port);
   }
@@ -44,6 +57,8 @@ public class SecretServer extends AbstractServer
   
   //Instance methods ************************************************
   
+  
+
   public boolean addOperative(Operative aOperative)
   {
     boolean wasAdded = false;
@@ -190,14 +205,14 @@ public class SecretServer extends AbstractServer
   {
     return 0;
   }
-
+  
+  
   @Override
   protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
-  	// TODO Auto-generated method stub
+	  System.out.println("Message recieved from " + client + " : " + msg);
   	
   }
-  
-  
+
   /**
    * This method handles any messages received from the client.
    * #Mission - returns missions of current operative 
@@ -214,6 +229,9 @@ public class SecretServer extends AbstractServer
    */
   @SuppressWarnings("unchecked")
 public void handleMessageFromClient(ArrayList<Object> list, ConnectionToClient client) {
+	  
+	  System.out.println("Message recieved from " + client + " : " + list);
+	  
 	  try {	
 		  if (list.get(2).equals("#Validate")) { 
 			  if (this.operatives.contains(list.get(1))){
@@ -221,17 +239,10 @@ public void handleMessageFromClient(ArrayList<Object> list, ConnectionToClient c
 			  } else {
 				  System.out.println("Operative Invalid.");
 				  client.close();
-			  }}
+			  }
+      }
 		  
-		  
-			  /*
-			   * Check to see if operative is in operatives list.
-			   * If they are, move them to activeOperatives list.
-			   * If not, disconnect client.
-			   * list(operative(codename,password))
-			   */
-		  
-		  
+		
 		  if (list.get(2).equals("#Mission")) {
 			  
 			  
@@ -325,66 +336,71 @@ public void handleMessageFromClient(ArrayList<Object> list, ConnectionToClient c
    */
   public static void main(String[] args) 
   {
-	  int port = 0; //Port to listen on
-	    try
-	    {
-	      port = Integer.parseInt(args[0]); //Get port from command line
-	    }
-	    catch(Throwable t)
-	    {
-	      port = DEFAULT_PORT; //Set port to 5555
-	    }
-	 
-	    SecretServer sv = new SecretServer(port);
-	    Operative operativea = new Operative("Magician", "29491031mg");
-	    Operative operativeb = new Operative("Hunter", "41591955ht");
-	    Operative operativec = new Operative("Player", "15619211py");
-	    Operative operatived = new Operative("Climber", "54815835cm");
-	    Operative operativee = new Operative("Ascetic", "15858465ac");
-	    
-	    sv.operatives.add(1,operativea);
-	    sv.operatives.add(2,operativeb);
-	    sv.operatives.add(3,operativec);
-	    sv.operatives.add(4,operatived);
-	    sv.operatives.add(5,operativee);
-	    
-	    Mission missiona=new Mission(31/21/2014,5/1/2015,"kill the morkingbird");
-	    Mission missionb=new Mission(15/1/2015,25/1/2015,"kill the messenge");
-	    Mission missionc=new Mission(3/2/2015,15/2/2015,"kill the noise");
-	    Mission missiond=new Mission(1/3/2014,1/2/2015,"kill the moon");
-	    
-        sv.missions.add(1,missiona);
-        sv.missions.add(2,missionb);
-        sv.missions.add(3,missionc);
-        sv.missions.add(4,missiond);
-        
-        Resource resourcea = new Resource("AIRE" ,"Carnac Stones,France" ,"$14M");
-        Resource resourceb = new Resource("Ship" ,"The Devil’s Sea" ,"$54M");
-        Resource resourcec = new Resource("Pharaoh's Scepter" ,"Nile River,Giza" ,"$15M");
-        Resource resourced = new Resource("Batmobile" ,"Gotham City,US" ,"$8M");
-        
-        sv.resources.add(resourcea);
-        sv.resources.add(resourceb);
-        sv.resources.add(resourcec);
-        sv.resources.add(resourced);
-        
-        
-        
-	    /*
-	     *  Here we will create some fake lists of operative and 
-	     *  stuff.  
-	     */
-	    
-	    try 
-	    {
-	      sv.listen(); //Start listening for connections
-	    } 
-	    catch (Exception ex) 
-	    {
-	      System.out.println("ERROR - Could not listen for clients!");
-	    }
-	  
+    int port = 0; //Port to listen on
+
+    try
+    {
+      port = Integer.parseInt(args[0]); //Get port from command line
+    }
+    catch(Throwable t)
+    {
+      port = DEFAULT_PORT; //Set port to 5555
+    }
+	
+    EchoServer sv = new EchoServer(port);
+    
+    
+    Operative operativea = new Operative("Magician", "29491031mg");
+    Operative operativeb = new Operative("Hunter", "41591955ht");
+    Operative operativec = new Operative("Player", "15619211py");
+    Operative operatived = new Operative("Climber", "54815835cm");
+    Operative operativee = new Operative("Ascetic", "15858465ac");
+    
+    sv.operatives.add(operativea);
+    sv.operatives.add(operativeb);
+    sv.operatives.add(operativec);
+    sv.operatives.add(operatived);
+    sv.operatives.add(operativee);
+    
+    System.out.println("bleep");
+    
+    Mission missiona=new Mission(31/21/2014,5/1/2015,"kill the morkingbird");
+    Mission missionb=new Mission(15/1/2015,25/1/2015,"kill the messenge");
+    Mission missionc=new Mission(3/2/2015,15/2/2015,"kill the noise");
+    Mission missiond=new Mission(1/3/2014,1/2/2015,"kill the moon");
+    
+    System.out.println("bleep");
+    
+    sv.missions.add(missiona);
+    sv.missions.add(missionb);
+    sv.missions.add(missionc);
+    sv.missions.add(missiond);
+    
+    System.out.println("bleep");
+    
+    Resource resourcea = new Resource("AIRE" ,"Carnac Stones,France" ,"$14M");
+    Resource resourceb = new Resource("Ship" ,"The Devil’s Sea" ,"$54M");
+    Resource resourcec = new Resource("Pharaoh's Scepter" ,"Nile River,Giza" ,"$15M");
+    Resource resourced = new Resource("Batmobile" ,"Gotham City,US" ,"$8M");
+    
+    System.out.println("bleep");
+    
+    sv.resources.add(resourcea);
+    sv.resources.add(resourceb);
+    sv.resources.add(resourcec);
+    sv.resources.add(resourced);    
+    
+    try 
+    {
+      sv.listen(); //Start listening for connections
+    } 
+    catch (Exception ex) 
+    {
+      System.out.println("ERROR - Could not listen for clients!");
+    }
   }
+
+
 
 }
 //End of EchoServer class

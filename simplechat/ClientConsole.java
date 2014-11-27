@@ -4,10 +4,9 @@
 
 import java.io.*;
 
+import spy.Operative;
 import client.*;
 import common.*;
-import spy.*;
-
 
 /**
  * This class constructs the UI for a chat client.  It implements the
@@ -33,8 +32,7 @@ public class ClientConsole implements ChatIF
   /**
    * The instance of the client that created this ConsoleChat.
    */
-  static ChatClient client;
-  
+   ChatClient client;
 
   
   //Constructors ****************************************************
@@ -106,9 +104,10 @@ public class ClientConsole implements ChatIF
    *
    * @param args[0] The host to connect to.
    */
-  public static void main(String[] args) throws IOException 
+  public static void main(String[] args) 
   {
     String host = "";
+    int port = 0;  //The port number
 
     try
     {
@@ -119,8 +118,10 @@ public class ClientConsole implements ChatIF
       host = "localhost";
     }
     
-    ClientConsole chat= new ClientConsole(host, DEFAULT_PORT);
     
+    ClientConsole chat= new ClientConsole(host, DEFAULT_PORT);
+   
+
     BufferedReader fromConsole = 
             new BufferedReader(new InputStreamReader(System.in));  
     
@@ -129,25 +130,26 @@ public class ClientConsole implements ChatIF
 		codeName = fromConsole.readLine();
 	} catch (IOException e) {
 		System.out.println("CodeName invalid. Session disconnected.");
-		client.quit();
+		chat.client.quit();
 	}
     String pWord = null;
 	try {
 		pWord = fromConsole.readLine();
 	} catch (IOException e) {
 		System.out.println("Password invalid. Session disconnected.");
-		client.quit();
+		chat.client.quit();
 	}
     
     Operative operative = new Operative(codeName,pWord);
     
-    client.handleMessageFromClientUI("#Validate",operative);
+    try {
+		chat.client.handleMessageFromClientUI("#Validate",operative);
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
     
     chat.accept(operative);  //Wait for console data
   }
 }
 //End of ConsoleChat class
-
-
-
-

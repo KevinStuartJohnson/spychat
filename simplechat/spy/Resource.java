@@ -3,16 +3,22 @@
 
 package spy;
 
+import java.io.Serializable;
+
 // line 21 "model.ump"
 // line 38 "model.ump"
-public class Resource
+public class Resource implements Serializable
 {
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
-  //Resource Attributes
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+//Resource Attributes
   private String name;
   private String location;
   private String price;

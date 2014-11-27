@@ -2,18 +2,23 @@
 /*This code was generated using the UMPLE 1.21.0.4789 modeling language!*/
 package spy;
 
+import java.io.Serializable;
 import java.util.*;
 
 // line 2 "model.ump"
 // line 28 "model.ump"
-public class Operative
+public class Operative implements Serializable
 {
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
-  //Operative Attributes
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+//Operative Attributes
   private String codeName;
   private String privatePassword;
   private String dynamicPassword;

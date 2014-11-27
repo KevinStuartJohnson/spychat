@@ -79,17 +79,17 @@ public class ChatClient extends AbstractClient
    * #Quit sends operative and disconnect message to server.
    * @param message The message from the UI.    
    * @param operative who is using the chat.
+ * @throws IOException 
    */
-  public void handleMessageFromClientUI(String msg, Operative operative)
+  public void handleMessageFromClientUI(String msg, Operative operative) throws IOException
   {
 	  
 	ArrayList<Object> thingsToSend = new ArrayList<Object>(); // An arrayList with multiple objects, the first is always the operative
 	thingsToSend.add(operative);
 	thingsToSend.add(msg);
 	
-
     BufferedReader fromConsole = new BufferedReader(new InputStreamReader(System.in));  
-
+    
     try {
     	
     	
@@ -227,7 +227,7 @@ public class ChatClient extends AbstractClient
     catch(IOException e)
     {
       clientUI.display
-        ("Could not send message to server.");
+        ("Could not boggads send message to server.");
     }
 
   }
