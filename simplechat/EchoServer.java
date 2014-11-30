@@ -292,12 +292,29 @@ public void handleMessageFromClient(Object list, ConnectionToClient client) {
   }
 			  
 		  
-  if (((ArrayList<Object>) list).get(1).equals("#CreateMission")) {
-	  System.out.println(list);
-	  this.addMission(((Mission) ((ArrayList<Object>) list).get(2)));
-	  thingsToSend.add("New mission updated.");
-	  this.sendToAllClients(thingsToSend);
-
+  if (((ArrayList<Object>) list).get(1).equals("#CreateMission")) {	  
+	  Operative temp = null;
+	  boolean foundOp = false;
+	  
+	  for (Operative o : operatives){
+		  if (o.getCodeName().equals(((ArrayList<Object>) list).get(3))){
+			  temp = o;
+			  foundOp = true;
+		  }
+	  }
+	  
+	  if (foundOp){
+		  this.addMission(((Mission) ((ArrayList<Object>) list).get(2)));
+		  for (Mission m : missions){
+			  if (m.equals(((ArrayList<Object>) list).get(2))){
+				  m.setOperative(temp);
+			  }
+		  }
+		  thingsToSend.add("New mission updated.");
+		  this.sendToAllClients(thingsToSend);
+	  } else {
+		  this.sendToAllClients("Operative not found, mission not added");
+	  }
   }
 
 		  
