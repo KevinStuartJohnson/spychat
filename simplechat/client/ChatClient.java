@@ -145,7 +145,6 @@ public void handleMessageFromServer(Object msg){
 	    	System.out.println("Enter description.");
 	    	String description = fromConsole.readLine();
 	    	
-	    	
 	    	System.out.println("Enter operative code name you want to do the mission.");
 	    	
 	    	String codeName = null;

@@ -51,6 +51,10 @@ public class Mission implements Serializable
     wasSet = true;
     return wasSet;
   }
+  
+  public void setResources(List<Resource> resource) {
+	  this.resources = resource;
+  }
 
   public boolean setEndDate(long aEndDate)
   {

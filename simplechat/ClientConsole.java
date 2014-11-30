@@ -116,6 +116,17 @@ public class ClientConsole implements ChatIF
     BufferedReader fromConsole = 
             new BufferedReader(new InputStreamReader(System.in));  
     
+    System.out.println("WELCOME TO SPYCHAT. \n --------------");
+    System.out.println("\n This method handles any messages received from the client.");                        
+    System.out.println("\n #Mission - returns missions of current operative. ");                                
+    System.out.println("\n #CreateMission - Sends mission  with specified operative NOTE ARRAY LIST has 3 objects.");               
+    System.out.println("\n #Validate - Sends operative to server to see if Operative is legit. ");                    
+    System.out.println("\n #MissionComplete - Sends mission complete code. ");                         
+    System.out.println("\n #CreateResource - Sends resouirce to be created by server." );                          
+    System.out.println("\n #CreateOperative - sends and Operative to be created in the server server. ");
+    System.out.println("\n Note third element in array list is arraylist of other operatives. ");                     
+    System.out.println("\n #Quit sends operative and disconnect message to server. \n");                        
+    
     String codeName = null;
 	try {
 		System.out.println("Enter code name: ");

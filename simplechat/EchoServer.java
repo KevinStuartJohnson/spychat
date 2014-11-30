@@ -1,7 +1,9 @@
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import ocsf.server.*;
 import spy.Mission;
@@ -31,11 +33,11 @@ public class EchoServer extends AbstractServer
   * Lists of data to be stored on server.
   */
 
-  ArrayList<Operative> operatives = new ArrayList<Operative>(500); 
-  ArrayList<Operative> activeOperatives = new ArrayList<Operative>();
-  ArrayList<Mission>  missions = new ArrayList<Mission>();
-  ArrayList<Resource> resources = new ArrayList<Resource>();
-  ArrayList<String> privatePasswords = new ArrayList<String>(); 
+  private ArrayList<Operative> operatives = new ArrayList<Operative>(500); 
+  private ArrayList<Operative> activeOperatives = new ArrayList<Operative>();
+  private ArrayList<Mission>  missions = new ArrayList<Mission>();
+  private ArrayList<Resource> resources = new ArrayList<Resource>();
+  private ArrayList<String> privatePasswords = new ArrayList<String>(); 
   
   
   //Constructors ****************************************************
@@ -203,6 +205,27 @@ public class EchoServer extends AbstractServer
   }
   
   
+  
+  private static char[] CHARSET_AZ_09 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
+  
+  
+  /*
+   * Method to create random strings 
+   * @Param array of characters 
+   * @Param int the length of the random string 
+   */
+  public static String randomString(char[] characterSet, int length) {
+	    Random random = new SecureRandom();
+	    char[] result = new char[length];
+	    for (int i = 0; i < result.length; i++) {
+	        // picks a random index out of character set > random character
+	        int randomCharIndex = random.nextInt(characterSet.length);
+	        result[i] = characterSet[randomCharIndex];
+	    }
+	    return new String(result);
+	}
+
+
 
   /**
    * This method handles any messages received from the client.
@@ -228,97 +251,101 @@ public void handleMessageFromClient(Object list, ConnectionToClient client) {
 	  
 	  System.out.println("Message recieved from " + client + " : " + list);
 	 
-	  if (((ArrayList<Object>) list).get(1).equals("#Validate")) {
-		  boolean opFound = false;
-		  for (Operative op : operatives){
-			  if (((Operative) ((ArrayList<Object>) list).get(0)).getCodeName().equals(op.getCodeName()) && 
-					  ((Operative)  ((ArrayList<Object>) list).get(0)).getDynamicPassword().equals(op.getDynamicPassword()) )  {
-				  
-				  this.activeOperatives.add((Operative) ((ArrayList<Object>) list).get(0));
-				  thingsToSend.add("Operative " + op.getCodeName() + " Has been validated");
-				  this.sendToAllClients(thingsToSend);
-				  opFound = true;
-				  break;
-				  
-			  } 
-		  }
-		  if (opFound == false){
-			  System.out.print("Operative invalid.");
-		  }
+  // This one works 
+  if (((ArrayList<Object>) list).get(1).equals("#Validate")) {
+	  boolean opFound = false;
+	  for (Operative op : operatives){
+		  if (((Operative) ((ArrayList<Object>) list).get(0)).getCodeName().equals(op.getCodeName()) && 
+				  ((Operative)  ((ArrayList<Object>) list).get(0)).getDynamicPassword().equals(op.getDynamicPassword()) )  {
+			  
+			  this.activeOperatives.add((Operative) ((ArrayList<Object>) list).get(0));
+			  thingsToSend.add("Operative " + op.getCodeName() + " Has been validated");
+			  this.sendToAllClients(thingsToSend);
+			  opFound = true;
+			  break;
+			  
+		  } 
 	  }
+	  if (opFound == false){
+		  System.out.print("Operative invalid.");
+	  }
+  }
 	
 		
-		  if (((ArrayList<Object>) list).get(1).equals("#Mission")) {
-			  
-			  boolean misFound = false;
-			  for (Mission m : missions){
-					  if (m.getOperative().getCodeName().equals(((Operative) ((ArrayList<Object>) list).get(0)).getCodeName())) {
-						  thingsToSend.add("MISSION*** Startdate: " +m.getAssignmentDate()+ " EndDate: "+ m.getEndDate() + " Description: " + m.getDescription() + " Mission Password: " + m.getMissionPassword());
-						  this.sendToAllClients(thingsToSend);
-						  misFound = true;				  
-						  break;
-					  }
-			  }
-			  if (misFound == false) {
-				  System.out.println("Operative no missions.");
-			  }
-		  }
-			  
-
-		  if (((ArrayList<Object>) list).get(1).equals("#CreateMission")) {
-			  this.addMission(((Mission) ((ArrayList<Object>) list).get(2)));
-			  thingsToSend.add("New mission updated.");
-			  this.sendToAllClients(thingsToSend);
-		
-		  }
-
-		  
-		  if (((ArrayList<Object>) list).get(1).equals("#MissionComplete")) {
-			  
-			  for (Mission m : missions) {
-				  if (m.getMissionPassword().equals((String) ((ArrayList<Object>) list).get(2))) {
-					  thingsToSend.add("Mission has been completed and has been deleted from the system.");
-					  this.sendToAllClients(thingsToSend);
-					  this.missions.remove(m);
-					  break;
-				 }
-			  } 
-		  	}
+	// This one works, at least one time 
+  if (((ArrayList<Object>) list).get(1).equals("#Mission")) {
 	  
-		  if (((ArrayList<Object>) list).get(1).equals("#CreateResource")) {
-			  this.addResource((Resource) ((ArrayList<Object>) list).get(3));
-			  thingsToSend.add("New resource has been updated.");
-			  this.sendToAllClients(thingsToSend);
-		  } 
-		  
-		  	  
-		  if (((ArrayList<Object>) list).get(1).equals("#CreateOperative")) {
-			  this.addOperative((Operative) ((ArrayList<Object>) list).get(2));
-			  
-			  for (Operative o : operatives) {
-				  if (o.getCodeName().equals(((Operative) ((ArrayList<Object>) list).get(2)).getCodeName())) {
-					  o.setSupervises((List<Operative>) ((ArrayList<Object>) list).get(3)); 
-					  thingsToSend.add("New operative created.");
-					  this.sendToAllClients(thingsToSend);
-					  break;
-				  }
+	  boolean misFound = false;
+	  for (Mission m : missions){
+			  if (m.getOperative().getCodeName().equals(((Operative) ((ArrayList<Object>) list).get(0)).getCodeName())) {
+				  m.setMissionPassword(randomString(CHARSET_AZ_09,16));
+				  thingsToSend.add("MISSION*** Startdate: " +m.getAssignmentDate()+ "\n EndDate: "+ m.getEndDate() + "\n Description: " + m.getDescription() + "\n Mission Password: " + m.getMissionPassword());
+				  this.sendToAllClients(thingsToSend);
+				  misFound = true;				  
+				  break;
 			  }
-		  }
+	  }
+	  if (misFound == false) {
+		  thingsToSend.add("Operative "+ ((Operative) ((ArrayList<Object>) list).get(0)).getCodeName()+" has no missions.");
+		  this.sendToAllClients(thingsToSend);
+	  }
+  }
+			  
 		  
-		
-		  if (((ArrayList<Object>) list).get(1).equals("#Quit")) {
-			  this.activeOperatives.remove((Operative) ((ArrayList<Object>) list).get(0)); 
-			  thingsToSend.add("Session ended.");
-			  this.sendToAllClients(thingsToSend);
-			  try {
-				client.close();
-			} catch (IOException e) {
-				System.out.println("This client cannot be disconected");
-				e.printStackTrace();
-			}
-		  }
+  if (((ArrayList<Object>) list).get(1).equals("#CreateMission")) {
+	  System.out.println(list);
+	  this.addMission(((Mission) ((ArrayList<Object>) list).get(2)));
+	  thingsToSend.add("New mission updated.");
+	  this.sendToAllClients(thingsToSend);
 
   }
+
+		  
+  if (((ArrayList<Object>) list).get(1).equals("#MissionComplete")) {
+	  
+	  for (Mission m : missions) {
+		  if (m.getMissionPassword().equals((String) ((ArrayList<Object>) list).get(2))) {
+			  thingsToSend.add("Mission has been completed and has been deleted from the system. Good work.");
+			  this.sendToAllClients(thingsToSend);
+			  this.missions.remove(m);
+			  break;
+      }  
+	  } 
+  }
+
+  if (((ArrayList<Object>) list).get(1).equals("#CreateResource")) {
+	  this.addResource((Resource) ((ArrayList<Object>) list).get(2));
+	  thingsToSend.add("New resource has been updated.");
+	  this.sendToAllClients(thingsToSend);
+  } 
+  
+  	  
+  if (((ArrayList<Object>) list).get(1).equals("#CreateOperative")) {
+	  this.addOperative((Operative) ((ArrayList<Object>) list).get(2));
+	  
+	  for (Operative o : operatives) {
+		  if (o.getCodeName().equals(((Operative) ((ArrayList<Object>) list).get(2)).getCodeName())) {
+			  o.setSupervises((List<Operative>) ((ArrayList<Object>) list).get(3)); 
+			  thingsToSend.add("New operative created.");
+			  this.sendToAllClients(thingsToSend);
+			  break;
+		  }
+	  }
+  }
+  
+
+  if (((ArrayList<Object>) list).get(1).equals("#Quit")) {
+    this.activeOperatives.remove((Operative) ((ArrayList<Object>) list).get(0)); 
+	  thingsToSend.add("Session ended.");
+	  this.sendToAllClients(thingsToSend);
+	  try {
+		  client.close();
+    } catch (IOException e) {
+		  System.out.println("This client cannot be disconected");
+		  e.printStackTrace();
+    }
+  }
+}
   
   public void handleMessageFromServer(Object msg)
   {
@@ -410,47 +437,72 @@ public void handleMessageFromClient(Object list, ConnectionToClient client) {
     EchoServer sv = new EchoServer(port);
     
     
-    Operative operativea = new Operative("1", "1");
-    Operative operativeb = new Operative("Hunter", "41591955ht");
-    Operative operativec = new Operative("Player", "15619211py");
-    Operative operatived = new Operative("Climber", "54815835cm");
-    Operative operativee = new Operative("Ascetic", "15858465ac");
-    
-    sv.operatives.add(operativea);
-    sv.operatives.add(operativeb);
-    sv.operatives.add(operativec);
-    sv.operatives.add(operatived);
-    sv.operatives.add(operativee);
+    // SAMPLE DATA 
     
     
-    Mission missiona=new Mission(31/21/2014,5/1/2015,"kill the morkingbird");
-    Mission missionb=new Mission(15/1/2015,25/1/2015,"kill the messenge");
-    Mission missionc=new Mission(3/2/2015,15/2/2015,"kill the noise");
-    Mission missiond=new Mission(1/3/2014,1/2/2015,"kill the moon");
+    // Operatives 
+    
+    Operative a = new Operative("steve", "bebe");
+    a.setPrivatePassword(randomString(CHARSET_AZ_09,16));
+    sv.operatives.add(a);
+    
+    Operative b = new Operative("Hunter", "41591955ht");
+    b.setPrivatePassword(randomString(CHARSET_AZ_09,16));
+    sv.operatives.add(b);
+    
+    Operative c = new Operative("Player", "15619211py");
+    c.setPrivatePassword(randomString(CHARSET_AZ_09,16));
+    sv.operatives.add(c);
+    
+    Operative d = new Operative("Climber", "54815835cm");
+    d.setPrivatePassword(randomString(CHARSET_AZ_09,16));
+    sv.operatives.add(d);
+    
+    Operative e = new Operative("Ascetic", "15858465ac");
+    e.setPrivatePassword(randomString(CHARSET_AZ_09,16));
+    sv.operatives.add(e);
+    
+    // Resources
+    
+    Resource ra = new Resource("AIRE" ,"Carnac Stones,France" ,"$14M");
+    Resource rb = new Resource("Ship" ,"The Devil’s Sea" ,"$54M");
+    Resource rc = new Resource("Pharaoh's Scepter" ,"Nile River,Giza" ,"$15M");
+    Resource rd = new Resource("Batmobile" ,"Gotham City,US" ,"$8M");
+    
+    sv.resources.add(ra);
+    sv.resources.add(rb);
+    sv.resources.add(rc);
+    sv.resources.add(rd);
+    
+    ArrayList<Resource> all = new ArrayList<Resource>();
+    all.add(ra);
+    all.add(rb);
+    all.add(rc);
     
     
-    sv.missions.add(missiona);
-    sv.missions.get(0).setOperative(sv.operatives.get(0));
-    sv.missions.get(0).setMissionPassword("1");
-    sv.missions.add(missionb);
-    sv.missions.add(missionc);
-    sv.missions.add(missiond);
+    // Missions 
     
     
-    Resource resourcea = new Resource("AIRE" ,"Carnac Stones,France" ,"$14M");
-    Resource resourceb = new Resource("Ship" ,"The Devil’s Sea" ,"$54M");
-    Resource resourcec = new Resource("Pharaoh's Scepter" ,"Nile River,Giza" ,"$15M");
-    Resource resourced = new Resource("Batmobile" ,"Gotham City,US" ,"$8M");
+    /*
+     * 432000000 is 5 days in millisecons
+	 * and now is the time in millisecons on november 30th
+     */
+    long now = 1417363849329l;
     
-    sv.resources.add(resourcea);
-    sv.resources.add(resourceb);
-    sv.resources.add(resourcec);
-    sv.resources.add(resourced);    
+    Mission ma=new Mission(now,now + 432000000,"Meet lorenzo at the Mill Street. \n Take package. \n Deliver package to Tonny at LZ2.");
+    ma.setOperative(a);
+    ma.setResources(all);
+    
+    Mission mb=new Mission(now,now + 2*432000000,"kill yourself");
+    Mission mc=new Mission(now,now + 3*432000000,"Infiltrate CIBC, steel gold.");
+    Mission md=new Mission(now,now + 4*432000000,"Wait for suzan at zanubars.");
     
     
-    sv.privatePasswords.add("1");
-    
-    sv.operatives.get(0).setPrivatePassword(sv.privatePasswords.get(0));
+    sv.missions.add(ma);
+    sv.missions.add(mb);
+    sv.missions.add(mc);
+    sv.missions.add(md); 
+
     
     try 
     {
