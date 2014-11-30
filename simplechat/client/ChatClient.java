@@ -8,7 +8,9 @@ import ocsf.client.*;
 import common.*;
 
 import java.io.*;
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Random;
 
 import spy.Mission;
 import spy.Operative;
@@ -45,10 +47,11 @@ public class ChatClient extends AbstractClient
    * @param clientUI The interface type variable.
    */
   
-  public ChatClient(String host, int port, ChatIF clientUI) 
+  public ChatClient(String host, int port, ChatIF clientUI,Operative operative) 
     throws IOException 
   {
     super(host, port); //Call the superclass constructor
+    this.operative = operative;
     this.clientUI = clientUI;
     openConnection();
   }
@@ -61,10 +64,36 @@ public class ChatClient extends AbstractClient
    *
    * @param msg The message from the server.
    */
-  public void handleMessageFromServer(Object msg) 
-  {
-    clientUI.display(msg.toString());
+public void handleMessageFromServer(Object msg){ 
+	
+	if (this.operative.getCodeName().equals(((Operative) ((ArrayList<Object>) msg).get(0)).getCodeName())) {
+		System.out.println(((ArrayList<Object>) msg).get(1));
+	}
   }
+  
+  
+  /*
+   * Alphabet in characters 
+   */
+  private static char[] CHARSET_AZ_09 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
+  
+  
+  /*
+   * Method to create random strings 
+   * @Param array of characters 
+   * @Param int the length of the random string 
+   */
+  public static String randomString(char[] characterSet, int length) {
+	    Random random = new SecureRandom();
+	    char[] result = new char[length];
+	    for (int i = 0; i < result.length; i++) {
+	        // picks a random index out of character set > random character
+	        int randomCharIndex = random.nextInt(characterSet.length);
+	        result[i] = characterSet[randomCharIndex];
+	    }
+	    return new String(result);
+	}
+
 
   /**
    * This method handles all data coming from the UI.
@@ -83,7 +112,7 @@ public class ChatClient extends AbstractClient
    */
   public void handleMessageFromClientUI(String msg, Operative operative) throws IOException
   {
-	  
+	
 	ArrayList<Object> thingsToSend = new ArrayList<Object>(); // An arrayList with multiple objects, the first is always the operative
 	thingsToSend.add(operative);
 	thingsToSend.add(msg);
@@ -94,12 +123,12 @@ public class ChatClient extends AbstractClient
     	
     	
     	if (msg.equals("#Validate")) {
-       	  sendToServer(thingsToSend); // sends (Operative,#Validate)
+       	  sendToServer(thingsToSend);// sends (Operative,#Validate)
          }
-
-    
 	      if (msg.equals("#Mission")){
 	    	 sendToServer(thingsToSend); // sends (operative,"#Mission")
+	    	 
+	    	 
 	      }
 	      
 	      if (msg.equals("#CreateMission")){
@@ -183,14 +212,16 @@ public class ChatClient extends AbstractClient
 	      
 	      if (msg.equals("#CreateOperative")){
 	    	  
-	    	  System.out.println("Enter Operative codeName");
+	    	  System.out.println("Enter Operative codeName.");
 	    	  
 	    	  String codeName = null;
 	    	  try {
 	    		  codeName = fromConsole.readLine(); 
 	    	  } catch (Exception e) {
-	    		  System.out.println("Code Name not Valid. No Operative created.");
+	    		  System.out.println("Stupid code name. No Operative created.");
 	    	  }
+	    	  
+	    	  System.out.println("Enter Operative password.");
 	    	  
 	    	  String pWord = null;
 	    	  try {
@@ -198,6 +229,10 @@ public class ChatClient extends AbstractClient
 	    	  } catch (Exception e) {
 	    		  System.out.println("Pass word is invalid. No Operative created");
 	    	  }
+	    	  
+	    	  String privWord = null;
+	    	  privWord = randomString(CHARSET_AZ_09,16);
+	    	  
 	    	  
 	    	  boolean addMoreOperatives = true;
 	    	  ArrayList<String> subordinates = new ArrayList<String>();
@@ -212,25 +247,36 @@ public class ChatClient extends AbstractClient
 	    		  }
 	    	  }
 	    	  
-	    	  thingsToSend.add(new Operative(codeName,pWord));
+	    	  Operative operativeToSend = new Operative(codeName,pWord);
+	    	  operativeToSend.setPrivatePassword(privWord);
+	    	  
+	    	  thingsToSend.add(operativeToSend);
 	    	  thingsToSend.add(subordinates);
 	    	  
 	    	  sendToServer(thingsToSend); // Sends (operative, #CreateOperative, Operative, Subordinates)
+	    	  
+	    	  System.out.println("Operative with private password" + operativeToSend.getPrivatePassword() + "Send to server");
 	      }
 	      
 	      
 	      if (msg.equals("#Quit")){ 
-	    	  sendToServer(thingsToSend);  // Sends (operative, #Quit)
 	      }
       
     }
     catch(IOException e)
     {
+    	System.out.println(e);
       clientUI.display
         ("Could not boggads send message to server.");
     }
 
   }
+  
+ public void connectionException(Exception e)
+ {
+	clientUI.display("Client has been disconected.");
+ }
+  
   
   /**
    * This method terminates the client.

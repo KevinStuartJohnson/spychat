@@ -6,6 +6,7 @@ package ocsf.server;
 
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -198,6 +199,7 @@ public class ConnectionToClient extends Thread {
 	 * Constantly reads the client's input stream. Sends all objects that are
 	 * read to the server. Not to be called.
 	 */
+	@SuppressWarnings("unchecked")
 	final public void run() {
 		server.clientConnected(this);
 
@@ -205,12 +207,12 @@ public class ConnectionToClient extends Thread {
 		// from clients
 		try {
 			// The message from the client
-			Object msg;
+			ArrayList<Object> msg;
 
 			while (!readyToStop) {
 				// This block waits until it reads a message from the client
 				// and then sends it for handling by the server
-				msg = input.readObject();
+				msg = (ArrayList<Object>) input.readObject();
 				server.receiveMessageFromClient(msg, this);
 			}
 		} catch (Exception exception) {

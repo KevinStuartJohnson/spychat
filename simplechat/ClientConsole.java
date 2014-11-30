@@ -1,7 +1,3 @@
-// This file contains material supporting section 3.7 of the textbook:
-// "Object Oriented Software Engineering" and is issued under the open-source
-// license found at www.lloseng.com 
-
 import java.io.*;
 
 import spy.Operative;
@@ -13,10 +9,6 @@ import common.*;
  * chat interface in order to activate the display() method.
  * Warning: Some of the code here is cloned in ServerConsole 
  *
- * @author Fran&ccedil;ois B&eacute;langer
- * @author Dr Timothy C. Lethbridge  
- * @author Dr Robert Lagani&egrave;re
- * @version July 2000
  */
 public class ClientConsole implements ChatIF 
 {
@@ -33,6 +25,7 @@ public class ClientConsole implements ChatIF
    * The instance of the client that created this ConsoleChat.
    */
    ChatClient client;
+   Operative operative;
 
   
   //Constructors ****************************************************
@@ -43,11 +36,11 @@ public class ClientConsole implements ChatIF
    * @param host The host to connect to.
    * @param port The port to connect on.
    */
-  public ClientConsole(String host, int port) 
+  public ClientConsole(String host, int port,Operative operative) 
   {
     try 
     {
-      client= new ChatClient(host, port, this);
+      client= new ChatClient(host, port, this,operative);
     } 
     catch(IOException exception) 
     {
@@ -74,8 +67,10 @@ public class ClientConsole implements ChatIF
       
       while (true) 
       {
+    	System.out.println("Enter a message.");
         message = fromConsole.readLine();
         client.handleMessageFromClientUI(message,operative);
+        
       }
     } 
     catch (Exception ex) 
@@ -91,7 +86,7 @@ public class ClientConsole implements ChatIF
    *
    * @param message The string to be displayed.
    */
-  public void display(String message) 
+  public void display(Object message) 
   {
     System.out.println("> " + message);
   }
@@ -118,38 +113,40 @@ public class ClientConsole implements ChatIF
       host = "localhost";
     }
     
-    
-    ClientConsole chat= new ClientConsole(host, DEFAULT_PORT);
-   
-
     BufferedReader fromConsole = 
             new BufferedReader(new InputStreamReader(System.in));  
     
     String codeName = null;
 	try {
+		System.out.println("Enter code name: ");
 		codeName = fromConsole.readLine();
 	} catch (IOException e) {
 		System.out.println("CodeName invalid. Session disconnected.");
-		chat.client.quit();
 	}
     String pWord = null;
 	try {
+		System.out.println("Enter password: ");
 		pWord = fromConsole.readLine();
 	} catch (IOException e) {
 		System.out.println("Password invalid. Session disconnected.");
-		chat.client.quit();
 	}
+
     
     Operative operative = new Operative(codeName,pWord);
     
+    
+    ClientConsole chat= new ClientConsole(host, DEFAULT_PORT,operative);
+   
     try {
 		chat.client.handleMessageFromClientUI("#Validate",operative);
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
+
+   
     
     chat.accept(operative);  //Wait for console data
   }
 }
-//End of ConsoleChat class
+

@@ -7,6 +7,8 @@ package ocsf.client;
 import java.io.*;
 import java.net.*;
 
+import spy.Operative;
+
 /**
  * The <code> AbstractClient </code> contains all the methods necessary to set
  * up the client side of a client-server architecture. When a client is thus
@@ -136,7 +138,6 @@ public abstract class AbstractClient implements Runnable {
 		if (clientSocket == null || output == null){
 			throw new SocketException("socket does not exist");
 		}
-
 		output.writeObject(msg);
 	}
 
@@ -244,6 +245,7 @@ public abstract class AbstractClient implements Runnable {
 
 				// Concrete subclasses do what they want with the
 				// msg by implementing the following method
+				
 				handleMessageFromServer(msg);
 			}
 		} catch (Exception exception) {
