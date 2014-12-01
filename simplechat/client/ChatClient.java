@@ -222,13 +222,7 @@ public void handleMessageFromServer(Object msg){
 	    	  
 	    	  System.out.println("Enter Operative password.");
 	    	  
-	    	  String pWord = null;
-	    	  try {
-	    		  pWord = fromConsole.readLine();
-	    	  } catch (Exception e) {
-	    		  System.out.println("Pass word is invalid. No Operative created");
-	    	  }
-	    	  
+	    	  String pWord = randomString(CHARSET_AZ_09,16);
 	    	  String privWord = null;
 	    	  privWord = randomString(CHARSET_AZ_09,16);
 	    	  
@@ -254,11 +248,12 @@ public void handleMessageFromServer(Object msg){
 	    	  
 	    	  sendToServer(thingsToSend); // Sends (operative, #CreateOperative, Operative, Subordinates)
 	    	  
-	    	  System.out.println("Operative with private password" + operativeToSend.getPrivatePassword() + "Send to server");
+	    	  System.out.println("Operative with private password " + operativeToSend.getPrivatePassword() + " and " + operativeToSend.getDynamicPassword() + " Send to server");
 	      }
 	      
 	      
 	      if (msg.equals("#Quit")){ 
+	    	  sendToServer(thingsToSend);
 	      }
       
     }

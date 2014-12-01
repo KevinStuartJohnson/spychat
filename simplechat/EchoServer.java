@@ -275,8 +275,12 @@ public void handleMessageFromClient(Object list, ConnectionToClient client) {
 	// This one works, at least one time 
   if (((ArrayList<Object>) list).get(1).equals("#Mission")) {
 	  
+	  
+	  // There is a null pointer exception somewhere in here
+	  // The second time we ask for a new mission 
 	  boolean misFound = false;
 	  for (Mission m : missions){
+		  try {
 			  if (m.getOperative().getCodeName().equals(((Operative) ((ArrayList<Object>) list).get(0)).getCodeName())) {
 				  m.setMissionPassword(randomString(CHARSET_AZ_09,16));
 				  thingsToSend.add("MISSION*** Startdate: " +m.getAssignmentDate()+ "\n EndDate: "+ m.getEndDate() + "\n Description: " + m.getDescription() + "\n Mission Password: " + m.getMissionPassword());
@@ -284,6 +288,10 @@ public void handleMessageFromClient(Object list, ConnectionToClient client) {
 				  misFound = true;				  
 				  break;
 			  }
+		  } catch (Exception e) {
+			  System.out.println(e);
+		  }
+		  
 	  }
 	  if (misFound == false) {
 		  thingsToSend.add("Operative "+ ((Operative) ((ArrayList<Object>) list).get(0)).getCodeName()+" has no missions.");
@@ -296,24 +304,34 @@ public void handleMessageFromClient(Object list, ConnectionToClient client) {
 	  Operative temp = null;
 	  boolean foundOp = false;
 	  
-	  for (Operative o : operatives){
-		  if (o.getCodeName().equals(((ArrayList<Object>) list).get(3))){
-			  temp = o;
-			  foundOp = true;
-		  }
-	  }
-	  
-	  if (foundOp){
-		  this.addMission(((Mission) ((ArrayList<Object>) list).get(2)));
-		  for (Mission m : missions){
-			  if (m.equals(((ArrayList<Object>) list).get(2))){
-				  m.setOperative(temp);
+	  try {
+		  for (Operative o : operatives){
+			  if (o.getCodeName().equals(((ArrayList<Object>) list).get(3))){
+				  temp = o;
+				  foundOp = true;
 			  }
 		  }
-		  thingsToSend.add("New mission updated.");
-		  this.sendToAllClients(thingsToSend);
-	  } else {
-		  this.sendToAllClients("Operative not found, mission not added");
+	  } catch (Exception e){
+		  System.out.println(e);
+		  System.out.println("1");
+	  }
+	  
+	  try {
+		  if (foundOp){
+			  this.addMission(((Mission) ((ArrayList<Object>) list).get(2)));
+			  for (Mission m : missions){
+				  if (m.equals(((ArrayList<Object>) list).get(2))){
+					  m.setOperative(temp);
+				  }
+			  }
+			  thingsToSend.add("New mission updated.");
+			  this.sendToAllClients(thingsToSend);
+		  } else {
+			  this.sendToAllClients("Operative not found, mission not added");
+		  }
+	  } catch (Exception e) {
+		  System.out.println(e);
+		  System.out.println("2");
 	  }
   }
 
@@ -322,7 +340,7 @@ public void handleMessageFromClient(Object list, ConnectionToClient client) {
 	  
 	  for (Mission m : missions) {
 		  if (m.getMissionPassword().equals((String) ((ArrayList<Object>) list).get(2))) {
-			  thingsToSend.add("Mission has been completed and has been deleted from the system. Good work.");
+			  thingsToSend.add("Mission with mission "+ m.getMissionPassword() + " has been completed.");
 			  this.sendToAllClients(thingsToSend);
 			  this.missions.remove(m);
 			  break;
@@ -352,7 +370,7 @@ public void handleMessageFromClient(Object list, ConnectionToClient client) {
   
 
   if (((ArrayList<Object>) list).get(1).equals("#Quit")) {
-    this.activeOperatives.remove((Operative) ((ArrayList<Object>) list).get(0)); 
+	  this.activeOperatives.remove((Operative) ((ArrayList<Object>) list).get(0)); 
 	  thingsToSend.add("Session ended.");
 	  this.sendToAllClients(thingsToSend);
 	  try {
