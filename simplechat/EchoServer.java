@@ -14,11 +14,9 @@ import spy.Resource;
  * This class overrides some of the methods in the abstract 
  * superclass in order to give more functionality to the server.
  *
- * @author Dr Timothy C. Lethbridge
- * @author Dr Robert Lagani&egrave;re
- * @author Fran&ccedfsdfdil;ois B&eacute;langer
- * @author Paul Holden
- * @version July 2000
+ * @author Kevin Johnson 6017605;
+ * @author ZhenHao Wu 6911292;
+ * @version Dec 2014
  */
 public class EchoServer extends AbstractServer 
 {
@@ -211,8 +209,8 @@ public class EchoServer extends AbstractServer
   
   /*
    * Method to create random strings 
-   * @Param array of characters 
-   * @Param int the length of the random string 
+   * @param characterSet a set of characters 
+   * @param length the length of the random string 
    */
   public static String randomString(char[] characterSet, int length) {
 	    Random random = new SecureRandom();
@@ -229,19 +227,21 @@ public class EchoServer extends AbstractServer
 
   /**
    * This method handles any messages received from the client.
-   * #Mission - returns missions of current operative 
-   * #CreateMission - Sends mission  with specified operative NOTE ARRAY LIST has 3 objects.
-   * #Validate - Sends operative to server to see if Operative is legit 
-   * #MissionComplete - Sends mission complete code         
-   * #CreateResource - Sends resouirce to be created by server.
-   * #CreateOperative - sends and Operative to be created in the server server 
-   * Note third element in array list is arraylist of other operatives 
-   * #Quit sends operative and disconnect message to server.
+   * This method recieves an arraylist of objects from the client 
+   * and does certain things depending on the objects recieved.
    *
-   * @param msg The message received from the client.
+   * Server responds to the following commands.
+   * #Mission - returns missions of current operative. 
+   * #CreateMission - creates an mission.
+   * #Validate - verifies the identity of the connected operative. 
+   * #MissionComplete - deletes completed mission from the server.   
+   * #CreateResource - creates new resource.
+   * #CreateOperative - creates new operative.
+   * #Quit - disconnects client.
+   *
+   * @param list The message received from the client.
    * @param client The connection from which the message originated.
    */
-
 @SuppressWarnings("unchecked")
 public void handleMessageFromClient(Object list, ConnectionToClient client) {
 	
@@ -251,135 +251,140 @@ public void handleMessageFromClient(Object list, ConnectionToClient client) {
 	  
 	  System.out.println("Message recieved from " + client + " : " + list);
 	 
-  // This one works 
-  if (((ArrayList<Object>) list).get(1).equals("#Validate")) {
-	  boolean opFound = false;
-	  for (Operative op : operatives){
-		  if (((Operative) ((ArrayList<Object>) list).get(0)).getCodeName().equals(op.getCodeName()) && 
-				  ((Operative)  ((ArrayList<Object>) list).get(0)).getDynamicPassword().equals(op.getDynamicPassword()) )  {
-			  
-			  this.activeOperatives.add((Operative) ((ArrayList<Object>) list).get(0));
-			  thingsToSend.add("Operative " + op.getCodeName() + " Has been validated");
-			  this.sendToAllClients(thingsToSend);
-			  opFound = true;
-			  break;
-			  
-		  } 
-	  }
-	  if (opFound == false){
-		  System.out.print("Operative invalid.");
-	  }
-  }
-	
+	if (((ArrayList<Object>) list).get(1).equals("#Validate")) {
+		boolean opFound = false;
+		for (Operative op : operatives){
+			if (((Operative) ((ArrayList<Object>) list).get(0)).getCodeName().equals(op.getCodeName()) && 
+				((Operative)  ((ArrayList<Object>) list).get(0)).getDynamicPassword().equals(op.getDynamicPassword()) )  {
+
+				this.activeOperatives.add((Operative) ((ArrayList<Object>) list).get(0));
+				thingsToSend.add("Operative " + op.getCodeName() + " Has been validated");
+				this.sendToAllClients(thingsToSend);
+				opFound = true;
+				break;
+			} 
+		}
+		if (opFound == false){
+			System.out.print("Operative invalid.");
+		}
+	}
 		
-	// This one works, at least one time 
-  if (((ArrayList<Object>) list).get(1).equals("#Mission")) {
-	  
-	  
-	  // There is a null pointer exception somewhere in here
-	  // The second time we ask for a new mission 
-	  boolean misFound = false;
-	  for (Mission m : missions){
-		  try {
-			  if (m.getOperative().getCodeName().equals(((Operative) ((ArrayList<Object>) list).get(0)).getCodeName())) {
-				  m.setMissionPassword(randomString(CHARSET_AZ_09,16));
-				  thingsToSend.add("MISSION*** Startdate: " +m.getAssignmentDate()+ "\n EndDate: "+ m.getEndDate() + "\n Description: " + m.getDescription() + "\n Mission Password: " + m.getMissionPassword());
-				  this.sendToAllClients(thingsToSend);
-				  misFound = true;				  
-				  break;
-			  }
-		  } catch (Exception e) {
-			  System.out.println(e);
-		  }
-		  
-	  }
-	  if (misFound == false) {
-		  thingsToSend.add("Operative "+ ((Operative) ((ArrayList<Object>) list).get(0)).getCodeName()+" has no missions.");
-		  this.sendToAllClients(thingsToSend);
-	  }
-  }
+	if (((ArrayList<Object>) list).get(1).equals("#Mission")) {
+
+		boolean misFound = false;
+		for (Mission m : missions){
+			try {
+				if (m.getOperative().getCodeName().equals(((Operative) ((ArrayList<Object>) list).get(0)).getCodeName())) {
+					m.setMissionPassword(randomString(CHARSET_AZ_09,16));
+					thingsToSend.add("MISSION*** Startdate: " +m.getAssignmentDate()+ "\n EndDate: "+ m.getEndDate() + "\n Description: " + m.getDescription() + "\n Mission Password: " + m.getMissionPassword());
+					this.sendToAllClients(thingsToSend);
+					misFound = true;				  
+					break;
+				}
+			} catch (Exception e) {
+			System.out.println(list);
+			}
+
+		}
+		if (misFound == false) {
+			thingsToSend.add("Operative "+ ((Operative) ((ArrayList<Object>) list).get(0)).getCodeName()+" has no missions.");
+			this.sendToAllClients(thingsToSend);
+		}
+	}
+				  
 			  
-		  
-  if (((ArrayList<Object>) list).get(1).equals("#CreateMission")) {	  
-	  Operative temp = null;
-	  boolean foundOp = false;
-	  
-	  try {
-		  for (Operative o : operatives){
-			  if (o.getCodeName().equals(((ArrayList<Object>) list).get(3))){
-				  temp = o;
-				  foundOp = true;
-			  }
-		  }
-	  } catch (Exception e){
-		  System.out.println(e);
-		  System.out.println("1");
-	  }
-	  
-	  try {
-		  if (foundOp){
-			  this.addMission(((Mission) ((ArrayList<Object>) list).get(2)));
-			  for (Mission m : missions){
-				  if (m.equals(((ArrayList<Object>) list).get(2))){
-					  m.setOperative(temp);
-				  }
-			  }
-			  thingsToSend.add("New mission updated.");
-			  this.sendToAllClients(thingsToSend);
-		  } else {
-			  this.sendToAllClients("Operative not found, mission not added");
-		  }
-	  } catch (Exception e) {
-		  System.out.println(e);
-		  System.out.println("2");
-	  }
-  }
+	if (((ArrayList<Object>) list).get(1).equals("#CreateMission")) {	  
+		Operative temp = null;
+		boolean foundOp = false;
 
-		  
-  if (((ArrayList<Object>) list).get(1).equals("#MissionComplete")) {
-	  
-	  for (Mission m : missions) {
-		  if (m.getMissionPassword().equals((String) ((ArrayList<Object>) list).get(2))) {
-			  thingsToSend.add("Mission with mission "+ m.getMissionPassword() + " has been completed.");
-			  this.sendToAllClients(thingsToSend);
-			  this.missions.remove(m);
-			  break;
-      }  
-	  } 
-  }
+		try {
+			for (Operative o : operatives){
+				if (o.getCodeName().equals(((ArrayList<Object>) list).get(3))){
+					temp = o;
+					foundOp = true;
+				}
+			}
+		} catch (Exception e){
+			System.out.println(e);
+			System.out.println("1");
+		}
 
-  if (((ArrayList<Object>) list).get(1).equals("#CreateResource")) {
-	  this.addResource((Resource) ((ArrayList<Object>) list).get(2));
-	  thingsToSend.add("New resource has been updated.");
-	  this.sendToAllClients(thingsToSend);
-  } 
-  
-  	  
-  if (((ArrayList<Object>) list).get(1).equals("#CreateOperative")) {
-	  this.addOperative((Operative) ((ArrayList<Object>) list).get(2));
-	  
-	  for (Operative o : operatives) {
-		  if (o.getCodeName().equals(((Operative) ((ArrayList<Object>) list).get(2)).getCodeName())) {
-			  o.setSupervises((List<Operative>) ((ArrayList<Object>) list).get(3)); 
-			  thingsToSend.add("New operative created.");
-			  this.sendToAllClients(thingsToSend);
-			  break;
-		  }
-	  }
-  }
-  
+		try {
+			if (foundOp){
+				this.addMission(((Mission) ((ArrayList<Object>) list).get(2)));
+				for (Mission m : missions){
+					if (m.equals(((ArrayList<Object>) list).get(2))){
+						m.setOperative(temp);
+					}
+				}
+				thingsToSend.add("New mission updated.");
+				this.sendToAllClients(thingsToSend);
+			} else {
+				this.sendToAllClients("Operative not found, mission not added");
+			}
+		} catch (Exception e) {
+		System.out.println(e);
+		System.out.println("2");
+		}
+	}
 
-  if (((ArrayList<Object>) list).get(1).equals("#Quit")) {
-	  this.activeOperatives.remove((Operative) ((ArrayList<Object>) list).get(0)); 
-	  thingsToSend.add("Session ended.");
-	  this.sendToAllClients(thingsToSend);
-	  try {
-		  client.close();
-    } catch (IOException e) {
-		  System.out.println("This client cannot be disconected");
-		  e.printStackTrace();
-    }
-  }
+			  
+	if (((ArrayList<Object>) list).get(1).equals("#MissionComplete")) {
+
+		for (Mission m : missions) {
+			if (m.getMissionPassword().equals((String) ((ArrayList<Object>) list).get(2))) {
+				thingsToSend.add("Mission with mission "+ m.getMissionPassword() + " has been completed.");
+				this.sendToAllClients(thingsToSend);
+				this.missions.remove(m);
+				break;
+			}  
+		} 
+	}
+
+	if (((ArrayList<Object>) list).get(1).equals("#CreateResource")) {
+		this.addResource((Resource) ((ArrayList<Object>) list).get(2));
+		thingsToSend.add("New resource has been updated.");
+		this.sendToAllClients(thingsToSend);
+	} 
+
+
+	if (((ArrayList<Object>) list).get(1).equals("#CreateOperative")) {
+		this.addOperative((Operative) ((ArrayList<Object>) list).get(2));
+		this.privatePasswords.add(((Operative) ((ArrayList<Object>) list).get(2)).getPrivatePassword());
+
+		for (Operative o : operatives) {
+			if (o.getCodeName().equals(((Operative) ((ArrayList<Object>) list).get(2)).getCodeName())) {
+				o.setSupervises((List<Operative>) ((ArrayList<Object>) list).get(3)); 
+				thingsToSend.add("New operative created.");
+				this.sendToAllClients(thingsToSend);
+				break;
+			}
+		}
+	}
+	  
+
+	if (((ArrayList<Object>) list).get(1).equals("#Quit")) {
+		this.activeOperatives.remove((Operative) ((ArrayList<Object>) list).get(0)); 
+		thingsToSend.add("Session ended.");
+		this.sendToAllClients(thingsToSend);
+		try {
+			client.close();
+		} catch (IOException e) {
+			System.out.println("This client cannot be disconected");
+		e.printStackTrace();
+		}
+	}
+	
+	if (((ArrayList<Object>) list).get(1).equals("#Abort")) {
+		if (this.privatePasswords.contains(((ArrayList<Object>) list).get(2))){
+			this.missions.removeAll(missions);
+			this.activeOperatives.removeAll(activeOperatives);
+			this.operatives.removeAll(operatives);
+			this.resources.removeAll(resources);
+			thingsToSend.add("System compromised, information destroyed.");
+			this.sendToAllClients(thingsToSend);
+		}
+	}
 }
   
   public void handleMessageFromServer(Object msg)
@@ -471,30 +476,35 @@ public void handleMessageFromClient(Object list, ConnectionToClient client) {
 	
     EchoServer sv = new EchoServer(port);
     
+    /*
+     * Create some fake data for server to process.
+     */
     
-    // SAMPLE DATA 
-    
-    
-    // Operatives 
+    // Operatives
     
     Operative a = new Operative("steve", "bebe");
     a.setPrivatePassword(randomString(CHARSET_AZ_09,16));
+    sv.privatePasswords.add(a.getPrivatePassword());
     sv.operatives.add(a);
     
     Operative b = new Operative("Hunter", "41591955ht");
     b.setPrivatePassword(randomString(CHARSET_AZ_09,16));
+    sv.privatePasswords.add(b.getPrivatePassword());
     sv.operatives.add(b);
     
     Operative c = new Operative("Player", "15619211py");
     c.setPrivatePassword(randomString(CHARSET_AZ_09,16));
+    sv.privatePasswords.add(c.getPrivatePassword());
     sv.operatives.add(c);
     
     Operative d = new Operative("Climber", "54815835cm");
     d.setPrivatePassword(randomString(CHARSET_AZ_09,16));
+    sv.privatePasswords.add(d.getPrivatePassword());
     sv.operatives.add(d);
     
     Operative e = new Operative("Ascetic", "15858465ac");
     e.setPrivatePassword(randomString(CHARSET_AZ_09,16));
+    sv.privatePasswords.add(e.getPrivatePassword());
     sv.operatives.add(e);
     
     // Resources
@@ -514,15 +524,9 @@ public void handleMessageFromClient(Object list, ConnectionToClient client) {
     all.add(rb);
     all.add(rc);
     
-    
     // Missions 
     
-    
-    /*
-     * 432000000 is 5 days in millisecons
-	 * and now is the time in millisecons on november 30th
-     */
-    long now = 1417363849329l;
+    long now = 1417363849329l; // some time on november 30th 
     
     Mission ma=new Mission(now,now + 432000000,"Meet lorenzo at the Mill Street. \n Take package. \n Deliver package to Tonny at LZ2.");
     ma.setOperative(a);
@@ -548,8 +552,4 @@ public void handleMessageFromClient(Object list, ConnectionToClient client) {
       System.out.println("ERROR - Could not listen for clients!");
     }
   }
-
-
-
 }
-//End of EchoServer class

@@ -8,7 +8,10 @@ import common.*;
  * This class constructs the UI for a chat client.  It implements the
  * chat interface in order to activate the display() method.
  * Warning: Some of the code here is cloned in ServerConsole 
- *
+ * 
+ * @author Kevin Johnson 6017605;
+ * @author ZhenHao Wu 6911292;
+ * @version Dec 2014
  */
 public class ClientConsole implements ChatIF 
 {
@@ -116,6 +119,10 @@ public class ClientConsole implements ChatIF
     BufferedReader fromConsole = 
             new BufferedReader(new InputStreamReader(System.in));  
     
+    /*
+     * Console greeting.
+     */
+    
     System.out.println("WELCOME TO SPYCHAT. \n --------------");
     System.out.println("\n This method handles any messages received from the client.");                        
     System.out.println("\n #Mission - returns missions of current operative. ");                                
@@ -148,6 +155,8 @@ public class ClientConsole implements ChatIF
     
     ClientConsole chat= new ClientConsole(host, DEFAULT_PORT,operative);
    
+    
+    // Initially send operative credentials to server. 
     try {
 		chat.client.handleMessageFromClientUI("#Validate",operative);
 	} catch (IOException e) {

@@ -20,10 +20,9 @@ import spy.Resource;
  * This class overrides some of the methods defined in the abstract
  * superclass in order to give more functionality to the client.
  *
- * @author Dr Timothy C. Lethbridge
- * @author Dr Robert Lagani&egrave;
- * @author Fran&ccedil;ois B&eacute;langer
- * @version July 2000
+ * @author Kevin Johnson 6017605;
+ * @author ZhenHao Wu 6911292;
+ * @version Dec 2014
  */
 public class ChatClient extends AbstractClient
 {
@@ -248,9 +247,14 @@ public void handleMessageFromServer(Object msg){
 	    	  
 	    	  sendToServer(thingsToSend); // Sends (operative, #CreateOperative, Operative, Subordinates)
 	    	  
-	    	  System.out.println("Operative with private password " + operativeToSend.getPrivatePassword() + " and " + operativeToSend.getDynamicPassword() + " Send to server");
+	    	  System.out.println("Operative with private password " + operativeToSend.getPrivatePassword() + " and dynamic password " + operativeToSend.getDynamicPassword() + " Send to server");
 	      }
 	      
+	      if (msg.equals("#Abort")) {
+	    	  System.out.println("Enter private password.");
+	    	  String ppWord = fromConsole.readLine();
+	    	  thingsToSend.add(ppWord);
+	      }
 	      
 	      if (msg.equals("#Quit")){ 
 	    	  sendToServer(thingsToSend);
