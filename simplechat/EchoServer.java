@@ -383,6 +383,16 @@ public void handleMessageFromClient(Object list, ConnectionToClient client) {
 			this.resources.removeAll(resources);
 			thingsToSend.add("System compromised, information destroyed.");
 			this.sendToAllClients(thingsToSend);
+		} else {
+			thingsToSend.add("Incorrect private password.");
+			this.sendToAllClients(thingsToSend);
+		}
+	}
+	
+	if (((ArrayList<Object>) list).get(1).equals("#GetResource")) {
+		if (this.activeOperatives.contains(((ArrayList<Object>) list).get(0))) {
+			thingsToSend.add(this.resources);
+			this.sendToAllClients(thingsToSend);
 		}
 	}
 }
@@ -484,6 +494,7 @@ public void handleMessageFromClient(Object list, ConnectionToClient client) {
     
     Operative a = new Operative("steve", "bebe");
     a.setPrivatePassword(randomString(CHARSET_AZ_09,16));
+    System.out.println(a.getPrivatePassword());
     sv.privatePasswords.add(a.getPrivatePassword());
     sv.operatives.add(a);
     

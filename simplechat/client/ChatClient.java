@@ -97,14 +97,16 @@ public void handleMessageFromServer(Object msg){
   /**
    * This method handles all data coming from the UI.
    * Possible client commands are;
-   * #Mission - returns missions of current operative 
-   * #CreateMission - Sends mission  with specified operative NOTE ARRAY LIST has 3 objects.
-   * #Validate - Sends operative to server to see if Operative is legit 
-   * #MissionComplete - Sends mission complete code         
-   * #CreateResource - Sends resouirce to be created by server.
-   * #CreateOperative - sends and Operative to be created in the server server 
-   * Note third element in array list is arraylist of other operatives 
-   * #Quit sends operative and disconnect message to server.
+   * Server responds to the following commands.
+   * #Mission - returns missions of current operative. 
+   * #CreateMission - creates an mission.
+   * #Validate - verifies the identity of the connected operative. 
+   * #MissionComplete - deletes completed mission from the server.   
+   * #CreateResource - creates new resource.
+   * #CreateOperative - creates new operative.
+   * #Abort - wipes all data from the server. 
+   * #Quit - disconnects client.
+   * 
    * @param message The message from the UI.    
    * @param operative who is using the chat.
  * @throws IOException 
@@ -254,7 +256,15 @@ public void handleMessageFromServer(Object msg){
 	    	  System.out.println("Enter private password.");
 	    	  String ppWord = fromConsole.readLine();
 	    	  thingsToSend.add(ppWord);
+	    	  sendToServer(thingsToSend);
 	      }
+	      
+	      if (msg.equals("#GetResource")) {
+	    	  String ppWord = fromConsole.readLine();
+	    	  thingsToSend.add(ppWord);
+	    	  sendToServer(thingsToSend);
+	      }
+	      
 	      
 	      if (msg.equals("#Quit")){ 
 	    	  sendToServer(thingsToSend);
